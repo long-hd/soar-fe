@@ -11,8 +11,9 @@ Paired with `soar-be` (Spring Boot backend). Multi-tenant. Permission-driven UI 
 
 ### Stack
 
-- **React 19.2+** with TypeScript (strict mode)
-- **Vite** (build tool, native ESM, fast HMR)
+- **React 19.2+** with TypeScript (strict mode, `erasableSyntaxOnly`, `verbatimModuleSyntax`)
+- **React Compiler** (via `babel-plugin-react-compiler`) — auto-memoize at build time; do NOT add manual `useMemo`/`useCallback` by default
+- **Vite 8** (build tool, Rolldown bundler, native ESM, fast HMR)
 - **Ant Design v6** (antd core, no ProComponents)
 - **Redux Toolkit** + **redux-persist** (client state)
 - **TanStack Query v5** (server state, cache, dedupe)
@@ -283,6 +284,9 @@ See `CONVENTIONS.md` for full details. Highlights:
 
 ## Don't
 
+- ❌ Don't use Vite `server.proxy` or any dev-only workaround that masks BE configuration gaps. If BE has CORS issues, fix BE CORS config. Dev environment behavior MUST match production.
+- ❌ Don't wrap callbacks in `useCallback` or values in `useMemo` by default. React Compiler handles this. Only add manual memoization when profiling shows a measured need.
+- ❌ Don't mutate state, props, or destructured values during render — silently disables React Compiler optimization on that component.
 - ❌ Don't hardcode role checks (`if user.role === 'ADMIN'`). Use `<HasPermission>`.
 - ❌ Don't use `useEffect` for data fetching. Use TanStack Query.
 - ❌ Don't put API URLs as strings in components. Centralize in `features/{module}/{entity}/api/`.
@@ -311,6 +315,8 @@ See `CONVENTIONS.md` for full details. Highlights:
 - [ ] Tailwind used only for layout (spacing, flex, grid, sizing) — no color/typography on theme-sensitive elements
 - [ ] Date/time formatted via `formatDateTime()` from `shared/lib/format`
 - [ ] Icons via `@iconify/react`
+- [ ] No manual `useMemo` / `useCallback` unless profiler-justified (trust React Compiler)
+- [ ] No mutation of state/props/destructured values during render
 - [ ] Page wrapper in `src/pages/` matches `system_menu.component` for dispatcher resolution
 
 ## Deep Context

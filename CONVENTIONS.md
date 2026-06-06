@@ -599,6 +599,88 @@ Colors, brand styling, borders-with-color do change → antd token.
 
 ---
 
+## Anti-patterns to avoid
+
+### Dev-only workarounds for BE issues
+
+**❌ Vite `server.proxy`** — common React community pattern that bypasses CORS in dev by proxying through the dev server. Forbidden in Soar because:
+
+1. **Dev ≠ production behavior.** Proxy only exists when running `pnpm dev`. Production build has no Vite server. CORS issues that the proxy masked surface only in production.
+2. **Workaround instead of fix.** If BE rejects FE requests, the correct response is to fix BE config (CORS, auth, headers), not to lie to the browser about origins.
+3. **Hides BE configuration gaps.** Future dev assumes "this just works" without understanding the actual cross-origin contract.
+
+Instead: BE must have correct CORS configuration. Soar BE (`SoarWebAutoConfiguration.corsFilterBean`) already does this. FE calls BE via absolute URL from `VITE_API_BASE_URL`.
+
+### Other patterns to avoid
+
+- **Disabling browser CORS via `--disable-web-security` flag**: same category as above, even worse.
+- **Hardcoded credentials in code for testing**: use env vars even in test fixtures.
+- **`@ts-ignore` / `@ts-expect-error` without justification**: a comment must explain why the suppression exists.
+- **`eslint-disable-next-line` without justification**: same as above.
+- **Commented-out code**: delete it. Git history is the archive.
+- **Catch-and-swallow errors silently**: log or rethrow, never `catch (e) {}`.
+- **`any` type sprinkled to bypass TS errors**: define the type properly, or use `unknown` and narrow.
+
+---
+
+## React Compiler
+
+Soar enables React Compiler (auto-memoization) via `babel-plugin-react-compiler` in the Vite pipeline. **Trust the compiler** — write straightforward React; let it optimize.
+
+### Default: no manual memoization
+
+```tsx
+// ✅ Idiomatic
+function UserList({ users }: Props) {
+  const [keyword, setKeyword] = useState('')
+  const filtered = users.filter(u => u.name.includes(keyword))
+  return (
+    <>
+      <Input.Search onSearch={setKeyword} />
+      <Table dataSource={filtered} />
+    </>
+  )
+}
+
+// ❌ Pre-RC boilerplate — unnecessary
+function UserList({ users }: Props) {
+  const [keyword, setKeyword] = useState('')
+  const filtered = useMemo(() => users.filter(u => u.name.includes(keyword)), [users, keyword])
+  const handleSearch = useCallback((v: string) => setKeyword(v), [])
+  return (
+    <>
+      <Input.Search onSearch={handleSearch} />
+      <Table dataSource={filtered} />
+    </>
+  )
+}
+```
+
+### Don't break the compiler
+
+Compiler silently bails (no optimization, no warning) when components violate rules. Avoid:
+
+- **Mutation during render**: `obj.x = 1`, `array.push(...)`, `Object.assign(obj, ...)`. Use immutable updates.
+- **Ref mutations during render**: only mutate refs in effects/handlers, never in render body.
+- **Conditional hooks**: standard Rules of Hooks — never put `useState` after an early return.
+- **Function arg mutation**: `function fn(arr) { arr.push(x) }`. Pure functions only.
+
+### When manual memoization is still right
+
+Edge cases — profile first:
+
+- Expensive computation where RC's auto-memo isn't sufficient (rare; verify with React DevTools profiler).
+- `useEffect` dependency requires referential stability for an object literal RC didn't memoize. Wrap with `useMemo` if so.
+
+### Verification
+
+`pnpm build` runs the compiler. To audit a component:
+
+- React DevTools Profiler → render time should not repeat the same computation across renders with the same inputs.
+- Optional later: enable `eslint-plugin-react-compiler` (warning-level) to surface bail-outs.
+
+---
+
 ## Git Conventions
 
 - Branch: `feature/{phase}-{description}` (e.g., `feature/phase5a-scaffold`, `feature/phase5d-user-crud`)

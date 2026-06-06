@@ -65,12 +65,18 @@ pnpm add \
 pnpm add -D \
   tailwindcss \
   @tailwindcss/vite \
+  @babel/core \
+  @rolldown/plugin-babel \
+  babel-plugin-react-compiler \
+  @types/babel__core \
   @types/node \
   vitest \
   @testing-library/react \
   @testing-library/jest-dom \
   jsdom
 ```
+
+**React Compiler dependencies**: `@babel/core` + `@rolldown/plugin-babel` + `babel-plugin-react-compiler` enable the compiler in Vite 8's Rolldown pipeline. See §1.4 for plugin wiring.
 
 Pin specific versions if reproducibility matters. Check antd is v6:
 
@@ -83,32 +89,28 @@ pnpm list antd
 
 ```ts
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
+import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    babel({ presets: [reactCompilerPreset()] }), // React Compiler
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
-  server: {
-    port: 5173,
-    proxy: {
-      '/admin-api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-      },
-      '/app-api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-      },
-    },
-  },
 })
 ```
+
+**No dev proxy needed**: Soar BE (`SoarWebAutoConfiguration.corsFilterBean`) has CORS allow-origin-pattern `*` + allow-headers `*` + allow-credentials. FE calls BE via absolute URL from `VITE_API_BASE_URL` — no CORS issue.
+
+**React Compiler note**: enabled at build time via `babel-plugin-react-compiler` + `reactCompilerPreset`. Auto-memoizes components — avoid manual `useMemo`/`useCallback` (see Plan §8.8, CONVENTIONS §React Compiler).
 
 ### 1.5 TS config additions (`tsconfig.json`)
 
@@ -127,11 +129,11 @@ Add (or verify) under `compilerOptions`:
 ### 1.6 Env file (`.env.development`)
 
 ```
-VITE_API_BASE_URL=
+VITE_API_BASE_URL=http://localhost:8080
 VITE_DEFAULT_TENANT_ID=1
 ```
 
-`VITE_API_BASE_URL` blank because Vite dev proxy handles routing to BE. Production builds set it to the deployment URL.
+`VITE_API_BASE_URL` set to BE absolute URL (Soar BE has CORS allow-all in dev — no proxy needed). For production, replace with deployment URL or leave blank if FE and BE are same-origin behind a reverse proxy.
 
 `.env.example` (commit, no secrets):
 

@@ -26,7 +26,8 @@ When making future architectural decisions, update this document **first**, then
 | ----------------- | --------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | Build tool        | Vite                                    | latest (^7)   | De facto standard, fast HMR, native ESM                                                                                               |
 | Framework         | React                                   | 19.2+         | `<Activity>` stable component required for tabs view keep-alive                                                                       |
-| Language          | TypeScript                              | latest (^5.6) | Type safety across boundaries                                                                                                         |
+| Compiler          | React Compiler                          | stable        | Auto-memoization; reduces manual `useMemo`/`useCallback`. Via `babel-plugin-react-compiler` + `@rolldown/plugin-babel` in Vite        |
+| Language          | TypeScript                              | latest (^6.0) | Type safety across boundaries. `erasableSyntaxOnly` + `verbatimModuleSyntax` enforced                                                 |
 | UI library        | Ant Design (antd)                       | v6            | Batteries-included for admin CRUD; matches yudao Element Plus catalog 1:1 conceptually; large component surface                       |
 | State (client)    | Redux Toolkit                           | latest        | Predictable global state for auth, menu, tabs, theme                                                                                  |
 | State (server)    | TanStack Query                          | v5            | Cache + revalidation + dedupe; pseudo keep-alive via `staleTime`                                                                      |
@@ -977,6 +978,55 @@ export function formatDate(instant: string | undefined): string {
 - **Action-level**: button `loading` prop bound to mutation `isPending`.
 - **Global**: avoid global spinner (yudao uses NProgress; we skip — page/action-level is enough).
 
+### 8.8 React Compiler
+
+Soar enables React Compiler in the Vite pipeline via `@rolldown/plugin-babel` + `babel-plugin-react-compiler` + `reactCompilerPreset` from `@vitejs/plugin-react`. Compiler runs at build time, transforming components to auto-memoize values and JSX.
+
+**Practical implications**:
+
+- **Trust the compiler — drop manual memoization by default.** Don't wrap callbacks in `useCallback` or values in `useMemo` "for performance". The compiler does this better than you can. Write straightforward code:
+
+  ```tsx
+  // ✅ Idiomatic with React Compiler
+  function UserList() {
+    const [keyword, setKeyword] = useState('')
+    const filtered = users.filter(u => u.name.includes(keyword)) // RC auto-memoizes
+    return <Table dataSource={filtered} onSearch={value => setKeyword(value)} /> // RC auto-memoizes the callback
+  }
+
+  // ❌ Pre-compiler boilerplate — unnecessary now
+  function UserList() {
+    const [keyword, setKeyword] = useState('')
+    const filtered = useMemo(() => users.filter(u => u.name.includes(keyword)), [users, keyword])
+    const handleSearch = useCallback((value: string) => setKeyword(value), [])
+    return <Table dataSource={filtered} onSearch={handleSearch} />
+  }
+  ```
+
+- **Compiler bails on rule-of-React violations.** If you mutate state, do side effects in render, or have early returns before hooks, the compiler **silently skips** that component (no memoization, no warnings unless ESLint plugin is configured). Keep components pure.
+
+- **Bail conditions to avoid**:
+  - Mutating function arguments or destructured values.
+  - Mutating refs during render (only in effects/handlers).
+  - Conditional hooks (Rules of Hooks — already disallowed).
+  - Calling functions that the compiler can't analyze (e.g., dynamic property access on opaque objects). Rare.
+
+- **When manual `useMemo` IS still appropriate** (edge cases):
+  - Expensive computation with stable inputs that runs each render even after RC kicks in. Verify with profiler first.
+  - Referential stability needed for a `useEffect` dependency. RC may or may not provide stability for nested object literals — when in doubt, profile.
+
+- **Don't add `eslint-plugin-react-compiler` rules to block builds yet.** Optional in early phases. Consider enabling later for a soft warning when components bail out.
+
+**Verify compiler is running**:
+
+```bash
+pnpm build
+# Output should show "react-compiler" transformations on console (verbose mode) or
+# inspect the dist bundle — memoized components have telltale `_t = useMemoCache()` calls
+```
+
+If verifying programmatically, install `react-compiler-runtime` matches (usually pulled transitively).
+
 ---
 
 ## 9. Form pattern
@@ -1169,6 +1219,25 @@ Rejected for Phase 5 baseline. Reasoning:
 Browser back from detail to list works correctly without URL sync: the list tab's Activity instance is preserved while detail is open; back restores the URL of the list tab and Activity makes it visible again with state intact.
 
 If/when added later, `useUrlTableState` layers cleanly on top of `usePagedQuery` without changing existing pages.
+
+### 11.8 No dev-only workarounds — fix BE instead
+
+Chosen: FE never uses dev-only tricks (Vite `server.proxy`, `--disable-web-security`, etc.) to work around BE configuration issues.
+
+Rationale:
+
+- Dev behavior must match production. Workarounds that exist only in `pnpm dev` mask bugs that surface in production deploy.
+- "BE thiếu gì thì yêu cầu thêm" — the project-level principle established in earlier sessions. FE never invents workarounds for missing/misconfigured BE features.
+- Soar BE already has correct CORS configuration (`SoarWebAutoConfiguration.corsFilterBean`: allow-origin-pattern `*`, allow-headers `*`, allow-credentials, allow-methods `*`). FE calls BE via absolute URL from `VITE_API_BASE_URL`. No proxy needed.
+
+Applies to:
+
+- ❌ Vite `server.proxy` blocks
+- ❌ Disabling browser CORS via Chrome flags
+- ❌ Mocking failing BE endpoints with MSW in dev to "make it work" (MSW is fine for tests, not for masking BE bugs in dev)
+- ❌ Any per-environment branching that hides differences
+
+When something breaks against BE, the FE handler is: identify the missing BE piece, document it as a BE work item, request the BE fix. Continue FE work on unrelated paths if possible.
 
 ---
 
