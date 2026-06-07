@@ -39,7 +39,7 @@ yudao frontend (`yudao-ui-admin-vue3`) uses Vue3 + Element Plus. Soar uses React
 | Utility file         | kebab-case                                | `format.ts`, `permission-matcher.ts`                                                                                                  |
 | Type/Interface       | PascalCase + DTO suffix for BE-mirrored   | `UserListItemDTO`, `PageResult<T>`                                                                                                    |
 | Constant             | UPPER_SNAKE_CASE                          | `API_BASE_URL`, `DEFAULT_PAGE_SIZE`                                                                                                   |
-| Redux slice file     | kebab-case `.slice.ts`                    | `auth.slice.ts` → export `authSlice`                                                                                                  |
+| Redux slice file     | kebab-case with `-slice` suffix           | `auth-slice.ts` → export `authSlice`                                                                                                  |
 | API function         | camelCase verb on api object              | `userApi.page()`, `userApi.create()`                                                                                                  |
 | Query key            | array, feature-namespaced                 | `['user', 'list', params]`, `['user', 'detail', id]`                                                                                  |
 | i18n key             | dot-separated, feature-namespaced         | `system.user.field.username`, `common.cancel`                                                                                         |
@@ -51,7 +51,7 @@ yudao frontend (`yudao-ui-admin-vue3`) uses Vue3 + Element Plus. Soar uses React
 ```
 features/system/user/
 ├── api/
-│   └── index.ts                # userApi: page, get, create, update, delete, ...
+│   └── user-api.ts             # userApi: page, get, create, update, delete, ... (named file matches feature)
 ├── components/
 │   ├── user-list-page.tsx      # Main list page
 │   ├── user-detail-page.tsx    # Detail page (linked from hidden menu)
@@ -60,9 +60,14 @@ features/system/user/
 │   └── user-columns.tsx        # Column definitions (exported as function or value)
 ├── hooks/
 │   └── use-user-list.ts        # Optional — domain-specific hook
-├── types.ts                    # UserListItemDTO, UserCreateReqDTO, ...
-└── index.ts                    # Re-export public surface (mostly unused — pages import directly)
+└── types.ts                    # UserListItemDTO, UserCreateReqDTO, ...
 ```
+
+**Naming convention**: `api/<entity>-api.ts` (not `api/index.ts`) — explicit names grep cleaner, and allow multiple API files in one feature when a domain spans multiple entities (e.g., `users/api/user-api.ts` + `users/api/role-binding-api.ts`).
+
+**`types/` subfolder** instead of flat `types.ts`: only when a feature has >1 entity (e.g., `users/types/user-types.ts` + `users/types/role-types.ts`) OR when a single types file exceeds ~200 lines. Default flat `types.ts`.
+
+**No `index.ts` barrel** at feature root — pages import from explicit paths (`@/features/system/user/components/user-list-page`). Barrels add maintenance cost for little gain.
 
 ## Comment Conventions
 
@@ -185,7 +190,7 @@ interface CommonResult<T> {
 ## API Call Pattern
 
 ```typescript
-// File: features/system/user/api/index.ts
+// File: features/system/user/api/user-api.ts
 import { http } from '@/shared/api/http-client'
 import type { CommonResult, PageResult } from '@/shared/api/types'
 import type { UserListItemDTO, UserCreateReqDTO, UserUpdateReqDTO, UserPageReqDTO } from '../types'
@@ -235,7 +240,7 @@ const createMutation = useMutation({
 
 ```tsx
 import { Table, Card, Button, Space } from 'antd'
-import { usePagedQuery } from '@/shared/hooks/usePagedQuery'
+import { usePagedQuery } from '@/shared/hooks/use-paged-query'
 
 export default function UserListPage() {
   const [tableState, setTableState] = useState({ pageNo: 1, pageSize: 10 })
@@ -393,7 +398,7 @@ export default function UserFormModal({ open, mode, initialValue, onClose }: Pro
 
 ```tsx
 // Conditional rendering
-import { HasPermission } from '@/shared/components/HasPermission'
+import { HasPermission } from '@/shared/components/has-permission'
 
 <HasPermission code="system:user:create">
   <Button type="primary" onClick={openCreate}>{t('common.create')}</Button>
@@ -405,7 +410,7 @@ import { HasPermission } from '@/shared/components/HasPermission'
 </HasPermission>
 
 // Programmatic check
-import { usePermission } from '@/shared/hooks/usePermission'
+import { usePermission } from '@/shared/hooks/use-permission'
 
 const can = usePermission()
 if (can('system:user:delete')) { /* ... */ }
