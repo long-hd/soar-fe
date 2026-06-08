@@ -12,7 +12,8 @@
     "loading": "Loading...",
     "success": "Success",
     "error": "Error",
-    "noData": "No data"
+    "noData": "No data",
+    "backToHome": "Back to Home"
   },
   "login": {
     "title": "Sign in to Soar",
@@ -37,5 +38,12 @@
     "tenantNotFound": "Tenant not configured for this domain",
     "networkError": "Network error — please check your connection",
     "sessionExpired": "Your session has expired. Please sign in again."
+  },
+  "tabRenderer": {
+    "welcomeTitle": "Welcome to Soar",
+    "welcomeSubtitle": "Select a menu item from the sidebar to get started.",
+    "unknownTab": "Unknown page: {{tab}}",
+    "unknownTabHint": "Try selecting a menu item from the sidebar.",
+    "comingSoon": "Coming soon"
   }
 }

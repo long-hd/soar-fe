@@ -12,7 +12,8 @@
     "loading": "Đang tải...",
     "success": "Thành công",
     "error": "Lỗi",
-    "noData": "Không có dữ liệu"
+    "noData": "Không có dữ liệu",
+    "backToHome": "Quay về trang chủ"
   },
   "login": {
     "title": "Đăng nhập Soar",
@@ -37,5 +38,12 @@
     "tenantNotFound": "Tenant chưa được cấu hình cho domain này",
     "networkError": "Lỗi mạng — vui lòng kiểm tra kết nối",
     "sessionExpired": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại."
+  },
+  "tabRenderer": {
+    "welcomeTitle": "Chào mừng đến với Soar",
+    "welcomeSubtitle": "Chọn một mục menu ở thanh bên để bắt đầu.",
+    "unknownTab": "Trang không tồn tại: {{tab}}",
+    "unknownTabHint": "Hãy chọn một mục menu từ thanh bên.",
+    "comingSoon": "Sẽ sớm có"
   }
 }
