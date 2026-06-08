@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { I18nextProvider } from 'react-i18next'
 import { ConfigProvider, theme as antdTheme } from 'antd'
 import i18n from '@/shared/i18n'
+import TenantBootGate from '@/features/auth/components/tenant-boot-gate'
 import { persistor, store, useAppSelector } from '@/app/store'
 import { queryClient } from '@/app/query-client'
 
@@ -29,7 +30,9 @@ export default function AppProviders({ children }: AppProvidersProps) {
       <PersistGate loading={null} persistor={persistor}>
         <QueryClientProvider client={queryClient}>
           <I18nextProvider i18n={i18n}>
-            <AntdThemeBridge>{children}</AntdThemeBridge>
+            <AntdThemeBridge>
+              <TenantBootGate>{children}</TenantBootGate>
+            </AntdThemeBridge>
             {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
           </I18nextProvider>
         </QueryClientProvider>

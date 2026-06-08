@@ -4,8 +4,8 @@
  * - Single-code check: `hasPermission(userPerms, 'system:user:create')`
  * - Any-of check: `hasPermission(userPerms, ['system:user:create', 'system:user:update'])`
  *
- * Wildcard `*:*:*` in userPerms grants everything (defensive: yudao FE has this branch
- * but yudao BE never emits it. Soar BE currently enumerates all menu codes for
+ * Wildcard `*:*:*` in userPerms grants everything (defensive: legacy FE has this branch
+ * but legacy BE never emits it. Soar BE currently enumerates all menu codes for
  * super-admin, so this branch is dead in practice today — kept for forward-compat).
  */
 

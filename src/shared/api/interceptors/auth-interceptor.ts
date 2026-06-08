@@ -1,10 +1,10 @@
-import type { CommonResult } from '@/shared/api/types'
+import type { AuthTokensDTO, CommonResult } from '@/shared/api/types'
 import { env } from '@/shared/lib/env'
-import { getTenantId, removeTenantId } from '@/shared/lib/tenant'
+import { getTenantId } from '@/shared/lib/tenant'
 import type { AxiosError } from 'axios'
 import axios, { type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import { Modal } from 'antd'
-import { formatToken, getRefreshToken, removeTokens, setTokens } from '@/shared/lib/token'
+import { formatToken, getRefreshToken, setTokens } from '@/shared/lib/token'
 import { request } from '@/shared/api/http-client'
 
 /**
@@ -31,20 +31,12 @@ const refreshClient = axios.create({
   timeout: 30_000,
 })
 
-// Inline DTO — moved to `features/auth/types.ts` in B1 (tech debt #2)
-interface TokensRespDTO {
-  userId: number
-  accessToken: string
-  refreshToken: string
-  expiresTime: string
-}
-
-async function callRefresh(refreshToken: string): Promise<TokensRespDTO> {
+async function callRefresh(refreshToken: string): Promise<AuthTokensDTO> {
   const tenantId = getTenantId()
   const headers: Record<string, string> = {}
   if (tenantId != null) headers['tenant-id'] = String(tenantId)
 
-  const { data } = await refreshClient.post<CommonResult<TokensRespDTO>>(
+  const { data } = await refreshClient.post<CommonResult<AuthTokensDTO>>(
     '/admin-api/system/auth/refresh-token',
     null,
     { params: { refreshToken }, headers },
@@ -67,11 +59,19 @@ function handleAuthorized(): Promise<never> {
     content: 'Your session has expired. Please log in again.',
     okText: 'Log in',
     cancelText: 'Cancel',
-    onOk: () => {
-      // Refactor later to dispatch(authSlice.actions.logout())
-      removeTokens()
-      removeTenantId()
-      window.location.href = '/login'
+    onOk: async () => {
+      // Dynamic imports break the module-init circular dependency chain:
+      //   store → slices/auth-slice → features/auth/api → shared/api/http-client
+      //     → shared/api/interceptors/auth-interceptor (this file) -> store (again)
+      // Top-level static imports would deadlock module init.
+      //
+      // At Modal-click runtime, all modules are fully evaluated → dynamic
+      // import resolves synchronously from the module graph cache.
+      const { store } = await import('@/app/store')
+      const { logout } = await import('@/app/slices/auth-slice')
+      await store.dispatch(logout())
+      // No window.location reload — main.tsx conditional render reacts to
+      // isAuthed=false and shows LoginPage. Tenant survives.
     },
     afterClose: () => {
       isShowingAuthModal = false

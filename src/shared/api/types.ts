@@ -22,3 +22,19 @@ export interface PageParam {
   pageNo: number
   pageSize: number
 }
+
+/**
+ * Auth token shape — cross-cutting because both `auth-interceptor.ts`
+ * (in `shared/api/interceptors/`) and `features/auth/` need it.
+ *
+ * Lives in shared/api/types instead of features/auth/types because
+ * AGENTS import-direction rule: shared/ MUST NOT import from features/.
+ *
+ * Returned by both `/auth/login` and `/auth/refresh-token`.
+ */
+export interface AuthTokensDTO {
+  userId: number
+  accessToken: string
+  refreshToken: string
+  expiresTime: string // ISO-8601 — informational only; not used for client-side expiry
+}
