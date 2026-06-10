@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, Typography, message as antdMessage } from 'antd'
+import { Button, Card, Form, Input, Typography, message as antdMessage, theme } from 'antd'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAppDispatch, useAppSelector } from '@/app/store'
@@ -9,18 +9,17 @@ import type { AuthLoginReqDTO } from '@/features/auth/types'
 /**
  * Login page.
  *
- * Redirect logic:
- *  - On mount: if already authed (e.g., user navigates to /login while logged
- *    in), redirect immediately to `?redirect=<target>` if present else `/`.
- *  - On submit success: navigate(redirect ?? '/', { replace: true }).
+ * Polish:
+ *  - Brand wordmark "Soar" above the card (primary color via theme token).
+ *  - Subtitle "Admin Console".
+ *  - Dev credentials pre-fill ONLY in dev mode (resolves tech debt #10).
+ *    Production builds get empty form — Vite tree-shakes the dev branch.
  *
- * `decodeURIComponent` mirrors the `encodeURIComponent` in AuthGuard — keeps
- * the redirect URL roundtrip clean.
- *
- * Pattern from legacy `permission.ts:84-89` — adapted to react-router-dom.
+ * Redirect logic
  */
 export default function LoginPage() {
   const { t } = useTranslation()
+  const { token } = theme.useToken()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -28,7 +27,6 @@ export default function LoginPage() {
   const isAuthed = useAppSelector(selectIsAuthed)
   const [form] = Form.useForm<AuthLoginReqDTO>()
 
-  // Already authed → bounce to target
   if (isAuthed) {
     const redirect = searchParams.get('redirect')
     const target = redirect ? decodeURIComponent(redirect) : '/'
@@ -47,24 +45,43 @@ export default function LoginPage() {
 
   return (
     <BlankLayout>
+      {/* Brand wordmark — above the card */}
+      <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        <Typography.Title
+          level={1}
+          style={{
+            color: token.colorPrimary,
+            marginBottom: 4,
+            letterSpacing: '0.08em',
+            fontWeight: 700,
+          }}
+        >
+          Soar
+        </Typography.Title>
+        <Typography.Text type="secondary">Admin Console</Typography.Text>
+      </div>
+
       <Card>
-        <Typography.Title level={3} style={{ textAlign: 'center', marginBottom: 24 }}>
+        <Typography.Title level={4} style={{ textAlign: 'center', marginTop: 0, marginBottom: 24 }}>
           {t('login.title')}
         </Typography.Title>
+
         <Form
           form={form}
           layout="vertical"
           onFinish={onFinish}
           requiredMark={false}
-          // Dev convenience — pre-fills creds. Remove for production builds.
-          initialValues={{ username: 'admin', password: 'admin123' }}
+          // Dev convenience — Vite tree-shakes in production builds
+          initialValues={
+            import.meta.env.DEV ? { username: 'admin', password: 'admin123' } : undefined
+          }
         >
           <Form.Item
             label={t('login.username')}
             name="username"
             rules={[{ required: true, message: t('login.usernameRequired') }]}
           >
-            <Input autoComplete="username" autoFocus />
+            <Input autoComplete="username" autoFocus size="large" />
           </Form.Item>
 
           <Form.Item
@@ -72,11 +89,17 @@ export default function LoginPage() {
             name="password"
             rules={[{ required: true, message: t('login.passwordRequired') }]}
           >
-            <Input.Password autoComplete="current-password" />
+            <Input.Password autoComplete="current-password" size="large" />
           </Form.Item>
 
-          <Form.Item style={{ marginBottom: 0 }}>
-            <Button type="primary" htmlType="submit" block loading={status === 'authenticating'}>
+          <Form.Item style={{ marginBottom: 0, marginTop: 8 }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              size="large"
+              loading={status === 'authenticating'}
+            >
               {t('login.submit')}
             </Button>
           </Form.Item>

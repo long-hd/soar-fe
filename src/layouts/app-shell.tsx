@@ -27,6 +27,7 @@ export default function AppShell() {
             fontWeight: 'bold',
             fontSize: 18,
             color: '#fff',
+            height: 64,
           }}
         >
           {collapsed ? 'S' : 'Soar'}

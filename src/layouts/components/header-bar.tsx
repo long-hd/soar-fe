@@ -1,33 +1,117 @@
-import { Button, Space, Typography } from 'antd'
+import { Avatar, Button, Dropdown, Space, Typography } from 'antd'
+import type { MenuProps } from 'antd'
 import { Icon } from '@iconify/react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/app/store'
 import { logout, selectUser } from '@/app/slices/auth-slice'
-import { selectSiderCollapsed, themeActions, selectThemeMode } from '@/app/slices/theme-slice'
+import { selectSiderCollapsed, selectThemeMode, themeActions } from '@/app/slices/theme-slice'
 
 /**
- * Top header. sider trigger left, user controls right, proper user dropdown (avatar + nickname + sub-menu).
+ * Top header bar.
  *
- * Logout handler navigates explicitly to `/login` to avoid the AuthGuard
- * redirect noise (`/login?redirect=%2F`).
+ * Left: sider collapse toggle (kept inline — frequent action, must stay easy).
+ *
+ * Right: user dropdown — Avatar + nickname + caret. Click expands to:
+ *  - Profile (TODO: adds /profile route)
+ *  - Theme: nested sub-menu, Light / Dark with check icon
+ *  - Language: nested sub-menu, English / Tiếng Việt with check icon
+ *  - Sign out: danger-styled
+ *
+ * Logout uses explicit navigate to avoid AuthGuard redirect noise
  */
 export default function HeaderBar() {
   const { t, i18n } = useTranslation()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const mode = useAppSelector(selectThemeMode)
   const collapsed = useAppSelector(selectSiderCollapsed)
+  const mode = useAppSelector(selectThemeMode)
   const user = useAppSelector(selectUser)
-
-  const toggleLang = () => {
-    i18n.changeLanguage(i18n.language.startsWith('vi') ? 'en' : 'vi')
-  }
 
   const handleLogout = async () => {
     await dispatch(logout())
     navigate('/login', { replace: true })
   }
+
+  const displayName = user?.nickname ?? user?.username ?? ''
+  const avatarLetter = displayName.charAt(0).toUpperCase() || '?'
+  const currentLang = i18n.language.startsWith('vi') ? 'vi' : 'en'
+
+  const dropdownItems: MenuProps['items'] = [
+    {
+      key: 'profile',
+      icon: <Icon icon="ant-design:user-outlined" />,
+      label: t('appShell.profile'),
+      disabled: true,
+    },
+    { type: 'divider' },
+    {
+      key: 'theme',
+      icon: <Icon icon="ant-design:bulb-outlined" />,
+      label: t('appShell.theme'),
+      children: [
+        {
+          key: 'theme-light',
+          icon:
+            mode === 'light' ? (
+              <Icon icon="ant-design:check-outlined" />
+            ) : (
+              <span style={{ display: 'inline-block', width: 14 }} />
+            ),
+          label: t('appShell.themeLight'),
+          onClick: () => dispatch(themeActions.setMode('light')),
+        },
+        {
+          key: 'theme-dark',
+          icon:
+            mode === 'dark' ? (
+              <Icon icon="ant-design:check-outlined" />
+            ) : (
+              <span style={{ display: 'inline-block', width: 14 }} />
+            ),
+          label: t('appShell.themeDark'),
+          onClick: () => dispatch(themeActions.setMode('dark')),
+        },
+      ],
+    },
+    {
+      key: 'language',
+      icon: <Icon icon="ant-design:global-outlined" />,
+      label: t('appShell.language'),
+      children: [
+        {
+          key: 'lang-en',
+          icon:
+            currentLang === 'en' ? (
+              <Icon icon="ant-design:check-outlined" />
+            ) : (
+              <span style={{ display: 'inline-block', width: 14 }} />
+            ),
+          label: 'English',
+          onClick: () => i18n.changeLanguage('en'),
+        },
+        {
+          key: 'lang-vi',
+          icon:
+            currentLang === 'vi' ? (
+              <Icon icon="ant-design:check-outlined" />
+            ) : (
+              <span style={{ display: 'inline-block', width: 14 }} />
+            ),
+          label: 'Tiếng Việt',
+          onClick: () => i18n.changeLanguage('vi'),
+        },
+      ],
+    },
+    { type: 'divider' },
+    {
+      key: 'logout',
+      icon: <Icon icon="ant-design:logout-outlined" />,
+      label: t('appShell.logout'),
+      danger: true,
+      onClick: handleLogout,
+    },
+  ]
 
   return (
     <div className="flex h-full items-center justify-between px-4">
@@ -44,16 +128,21 @@ export default function HeaderBar() {
         aria-label="Toggle sider"
       />
 
-      <Space size="middle">
-        <Typography.Text>{user?.nickname ?? user?.username ?? ''}</Typography.Text>
-        <Button onClick={() => dispatch(themeActions.toggleMode())}>
-          {mode === 'dark' ? t('appShell.themeDark') : t('appShell.themeLight')}
+      <Dropdown menu={{ items: dropdownItems }} placement="bottomRight" trigger={['click']}>
+        <Button type="text" style={{ height: 'auto', padding: '4px 8px' }}>
+          <Space size={8}>
+            <Avatar
+              size="small"
+              src={user?.avatar || undefined}
+              style={{ backgroundColor: user?.avatar ? undefined : '#1677ff' }}
+            >
+              {avatarLetter}
+            </Avatar>
+            <Typography.Text>{displayName}</Typography.Text>
+            <Icon icon="ant-design:down-outlined" fontSize={10} />
+          </Space>
         </Button>
-        <Button onClick={toggleLang}>{i18n.language.toUpperCase()}</Button>
-        <Button danger onClick={handleLogout}>
-          {t('appShell.logout')}
-        </Button>
-      </Space>
+      </Dropdown>
     </div>
   )
 }
