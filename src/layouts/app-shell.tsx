@@ -8,6 +8,8 @@ import TabBar from '@/layouts/components/tab-bar'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { prefetchDictData } from '@/shared/hooks/use-dict-data'
+import { prefetchDeptTree } from '@/shared/hooks/use-dept-tree'
+import { prefetchPostList } from '@/shared/hooks/use-post-list'
 
 const { Header, Sider, Content } = Layout
 
@@ -27,6 +29,8 @@ export default function AppShell() {
   // Runs once per AppShell mount (i.e., once per browser-tab session per logged-in user).
   useEffect(() => {
     prefetchDictData(queryClient)
+    prefetchDeptTree(queryClient)
+    prefetchPostList(queryClient)
   }, [queryClient])
 
   return (

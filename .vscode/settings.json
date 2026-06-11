@@ -17,7 +17,7 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
-    "AGENTS.md": "CONVENTIONS.md",
+    "AGENTS.md": "CONVENTIONS.md,TECH_DEBT.md",
     "*.ts": "$(capture).test.ts, $(capture).test.tsx",
     "*.tsx": "$(capture).test.ts, $(capture).test.tsx",
     "*.env": "$(capture).env.*",
