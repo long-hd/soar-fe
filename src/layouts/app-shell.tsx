@@ -5,6 +5,9 @@ import SiderMenu from '@/layouts/components/sider-menu'
 import HeaderBar from '@/layouts/components/header-bar'
 import TabRenderer from '@/layouts/components/tab-renderer'
 import TabBar from '@/layouts/components/tab-bar'
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { prefetchDictData } from '@/shared/hooks/use-dict-data'
 
 const { Header, Sider, Content } = Layout
 
@@ -17,6 +20,14 @@ const { Header, Sider, Content } = Layout
  */
 export default function AppShell() {
   const collapsed = useAppSelector(selectSiderCollapsed)
+  const queryClient = useQueryClient()
+
+  // Eager prefetch of cross-cutting lookup data.
+  // Fire-and-forget — components handle loading state gracefully.
+  // Runs once per AppShell mount (i.e., once per browser-tab session per logged-in user).
+  useEffect(() => {
+    prefetchDictData(queryClient)
+  }, [queryClient])
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
