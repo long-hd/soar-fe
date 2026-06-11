@@ -2,7 +2,7 @@
 
 > Cross-tool standard. Read by Claude Code, Cursor, Codex, and any AI coding agent.
 > Authoritative architecture spec: `soar-be/docs/FE_Admin_Architecture_Plan.md`. Read it first.
-> Last reviewed: 2026-06-07 (session S13). Phase 5A scaffold active.
+> Last reviewed: 2026-06-10 (Phase 5A complete). See `PHASE_5A_SUMMARY.md` for current baseline.
 
 ## Project Overview
 
@@ -58,11 +58,11 @@ src/
 │
 ├── shared/                     # Cross-cutting, reusable
 │   ├── api/
-│   │   ├── http-client.ts      # axios instance
-│   │   ├── types.ts            # CommonResult<T>, PageResult<T>, PageParam
+│   │   ├── http-client.ts      # axios instance named `request`
+│   │   ├── types.ts            # CommonResult<T>, PageResult<T>, PageParam, AuthTokensDTO
 │   │   └── interceptors/
 │   │       ├── auth-interceptor.ts   # 401 → single-flight refresh + replay queue
-│   │       └── error-interceptor.ts  # CommonResult unwrap, non-zero code normalize, toast
+│   │       └── error-interceptor.ts  # CommonResult code validation, non-zero toast (NO unwrap)
 │   ├── components/
 │   │   ├── has-permission.tsx
 │   │   ├── dict-tag.tsx
@@ -203,12 +203,12 @@ This is critical and unusual. Read carefully.
 
 ### API Conventions
 
-- All API calls go through `shared/api/http-client.ts` (axios instance).
+- All API calls go through the axios instance `request` from `shared/api/http-client.ts`.
 - Interceptors:
   - **Request**: attach `tenant-id` header (`getTenantId()` from `shared/lib/tenant.ts`) + `Authorization: Bearer <access>`. If `tenantId` is null (boot before resolve), do not attach — the only allowed request without `tenant-id` is `/system/tenant/get-by-website` (marked `@TenantIgnore` on BE).
   - **Response — auth-interceptor**: on `CommonResult.code === 401`, run single-flight refresh (port pattern from yudao `service.ts` — module-level `isRefreshing` + `requestQueue`). Replay queued requests with new token.
-  - **Response — error-interceptor**: unwrap `CommonResult` on `code === 0`. Other non-zero codes → toast `msg` + reject with `Error(msg)`.
-- API functions in `features/{module}/{entity}/api/<entity>-api.ts`.
+  - **Response — error-interceptor**: validate `CommonResult.code`. On `code === 0`, pass response through unchanged (do NOT unwrap — callers explicitly `.data.data`). On `code === 401`, delegated to auth-interceptor for single-flight refresh. Other non-zero codes → toast `msg` + reject with `Error(msg)`.
+- API functions in `features/{module}/{entity}/api/<entity>-api.ts`. Each method declares its unwrapped return type and performs `res.data.data` as the last expression.
 - TanStack Query keys: arrays with feature namespace, e.g., `['user', 'list', params]`, `['user', 'detail', id]`. Do NOT bake URL paths into keys.
 - Backend action-path pattern (NOT REST):
   - `GET /admin-api/{module}/{entity}/page?pageNo=1&pageSize=10&...`
@@ -229,7 +229,7 @@ This is critical and unusual. Read carefully.
 
 ### Refresh token — single-flight
 
-Port pattern from yudao `service.ts`. Module-level state `isRefreshing` + `requestQueue`. First 401 triggers refresh; subsequent 401s during refresh are queued and replayed. Refresh request itself uses a bare axios call (no interceptor chain) to avoid recursion. See Plan §7.1 for full code.
+Port pattern from yudao `service.ts`. Module-level state `isRefreshing` + `requestQueue`. First 401 triggers refresh; subsequent 401s during refresh are queued and replayed. Refresh request itself uses a bare axios call (no interceptor chain) to avoid recursion. Soar adds a `_isRetry` flag on the request config to prevent infinite loop if BE keeps returning 401 after refresh — fails fast with `handleAuthorized()` (Modal.confirm + dispatch logout via dynamic import). See Plan §7.1 for full code.
 
 ## Component Conventions
 
@@ -372,7 +372,7 @@ When porting from `yudao-ui-admin-vue3` (Vue) to Soar (React) — or adapting an
 - [ ] `pnpm build` succeeds
 - [ ] No `any` types
 - [ ] Action buttons wrapped in `<HasPermission>`
-- [ ] API calls use `shared/api/http-client.ts` instance
+- [ ] API calls use the `request` instance from `shared/api/http-client.ts`
 - [ ] Server data fetched via TanStack Query (not useEffect)
 - [ ] Forms use antd Form, not RHF (unless explicitly added for a complex case)
 - [ ] No hardcoded text — uses `t()` from i18next
@@ -391,9 +391,11 @@ When porting from `yudao-ui-admin-vue3` (Vue) to Soar (React) — or adapting an
 
 - Master architecture: `soar-be/docs/FE_Admin_Architecture_Plan.md`
 - Phase 5A FE plan: `soar-fe/docs/PHASE_5A_FE_PLAN.md`
+- Phase 5A summary (current baseline): `soar-fe/docs/PHASE_5A_SUMMARY.md`
+- Phase 5A smoke test: `soar-fe/docs/PHASE_5A_SMOKE_TEST.md`
 - Backend phase plan: `soar-be/docs/PHASE_PLAN.md`
 - Backend decisions: `soar-be/docs/ARCHITECTURE_DECISIONS.md`
 - Conventions detail: `CONVENTIONS.md`
 - Task templates: `skills/` directory
 
-> **Note**: `FE_Phase_5A_Scaffold_Spec.md` (from session S12) is **superseded** by `PHASE_5A_FE_PLAN.md` v2 and this file. The scaffold spec contains outdated patterns (`VITE_DEFAULT_TENANT_ID` env var, circular import between http-client and error-interceptor, static `tab-registry.ts` instead of `import.meta.glob`). Read for intent only; follow this AGENTS.md + PHASE_5A_FE_PLAN.md for actual decisions.
+> **Note**: `FE_Phase_5A_Scaffold_Spec.md` (from session S12) is **superseded** by `PHASE_5A_FE_PLAN.md` v2, `PHASE_5A_SUMMARY.md`, and this file. The scaffold spec contains outdated patterns (`VITE_DEFAULT_TENANT_ID` env var, circular import between http-client and error-interceptor, static `tab-registry.ts` instead of `import.meta.glob`). Read for intent only; follow this AGENTS.md + PHASE_5A_SUMMARY.md for actual decisions.

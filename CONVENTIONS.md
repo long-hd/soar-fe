@@ -24,7 +24,7 @@ yudao frontend (`yudao-ui-admin-vue3`) uses Vue3 + Element Plus. Soar uses React
 | Icons            | Iconify (via `<Icon icon="ep:tools"/>`)    | Iconify (via `@iconify/react`)                                 |
 | Date             | dayjs                                      | dayjs                                                          |
 | i18n             | vue-i18n                                   | react-i18next                                                  |
-| HTTP             | axios                                      | axios                                                          |
+| HTTP             | axios                                      | axios (instance named `request`)                               |
 
 ---
 
@@ -191,7 +191,7 @@ interface CommonResult<T> {
 
 ```typescript
 // File: features/system/user/api/user-api.ts
-import { http } from '@/shared/api/http-client'
+import { request } from '@/shared/api/http-client'
 import type { CommonResult, PageResult } from '@/shared/api/types'
 import type { UserListItemDTO, UserCreateReqDTO, UserUpdateReqDTO, UserPageReqDTO } from '../types'
 
@@ -199,20 +199,40 @@ import type { UserListItemDTO, UserCreateReqDTO, UserUpdateReqDTO, UserPageReqDT
 const URL_PREFIX = '/admin-api/system/user'
 
 export const userApi = {
-  page: (params: UserPageReqDTO) =>
-    http.get<PageResult<UserListItemDTO>>(`${URL_PREFIX}/page`, { params }),
+  page: async (params: UserPageReqDTO): Promise<PageResult<UserListItemDTO>> => {
+    const res = await request.get<CommonResult<PageResult<UserListItemDTO>>>(`${URL_PREFIX}/page`, {
+      params,
+    })
+    return res.data.data
+  },
 
-  get: (id: number) => http.get<UserListItemDTO>(`${URL_PREFIX}/get`, { params: { id } }),
+  get: async (id: number): Promise<UserListItemDTO> => {
+    const res = await request.get<CommonResult<UserListItemDTO>>(`${URL_PREFIX}/get`, {
+      params: { id },
+    })
+    return res.data.data
+  },
 
-  create: (data: UserCreateReqDTO) => http.post<number>(`${URL_PREFIX}/create`, data),
+  create: async (data: UserCreateReqDTO): Promise<number> => {
+    const res = await request.post<CommonResult<number>>(`${URL_PREFIX}/create`, data)
+    return res.data.data
+  },
 
-  update: (data: UserUpdateReqDTO) => http.put<boolean>(`${URL_PREFIX}/update`, data),
+  update: async (data: UserUpdateReqDTO): Promise<boolean> => {
+    const res = await request.put<CommonResult<boolean>>(`${URL_PREFIX}/update`, data)
+    return res.data.data
+  },
 
-  delete: (id: number) => http.delete<boolean>(`${URL_PREFIX}/delete`, { params: { id } }),
+  delete: async (id: number): Promise<boolean> => {
+    const res = await request.delete<CommonResult<boolean>>(`${URL_PREFIX}/delete`, {
+      params: { id },
+    })
+    return res.data.data
+  },
 }
 ```
 
-Note: `http` is the axios instance wrapped to **unwrap CommonResult**, so return types are `T` not `CommonResult<T>`. The interceptor resolves with `data.data` when `code === 0`.
+Note: `request` is the axios instance from `@/shared/api/http-client`. The response interceptor validates `CommonResult.code` (toasts and rejects on non-zero) but does NOT unwrap — success responses pass through as full `AxiosResponse<CommonResult<T>>`. Each `userApi` method declares its unwrapped return type and performs `res.data.data` as the last expression. This matches yudao convention 1:1 and keeps response shape transparent.
 
 ## TanStack Query Pattern
 
@@ -504,10 +524,10 @@ export function MenuIcon({ name, size = 16 }: { name: string; size?: number }) {
 
 ## Error Handling Tiers
 
-1. **Axios response interceptor** (`shared/api/interceptors/error-interceptor.ts`)
-   - `code === 0` → resolve with `data.data`.
-   - `code === 401` → single-flight refresh, retry on success, logout on failure.
-   - Other `code !== 0` → show `message.error(msg)`, reject with `Error(msg)`.
+1. **Axios response interceptor** (`shared/api/interceptors/`)
+   - `code === 0` → pass response through unchanged. Callers do `res.data.data` to unwrap explicitly.
+   - `code === 401` → auth-interceptor runs single-flight refresh, retries on success, dispatches logout on failure (Modal.confirm "Session expired" + dynamic-import dispatch).
+   - Other `code !== 0` → error-interceptor shows `message.error(msg)`, rejects with `Error(msg)`.
    - Network errors → show generic error toast.
 
 2. **TanStack Query `onError`** (per-mutation/query)
