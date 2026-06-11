@@ -7,6 +7,11 @@ export const env = {
   isDev: import.meta.env.DEV,
   isProd: import.meta.env.PROD,
   mode: import.meta.env.MODE,
+
+  // table default page and page size options
+  tableDefaultPage: 1,
+  tableDefaultPageSize: 10,
+  tablePageSizeOptions: [10, 20, 30, 50, 100] as const,
 } as const
 
 if (!env.apiBaseUrl) {
