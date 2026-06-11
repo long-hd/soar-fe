@@ -45,5 +45,11 @@
     "unknownTab": "Trang không tồn tại: {{tab}}",
     "unknownTabHint": "Hãy chọn một mục menu từ thanh bên.",
     "comingSoon": "Sẽ sớm có"
+  },
+  "tagsView": {
+    "close": "Đóng",
+    "closeOthers": "Đóng các tab khác",
+    "closeAll": "Đóng tất cả",
+    "refresh": "Tải lại"
   }
 }

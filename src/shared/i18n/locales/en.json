@@ -45,5 +45,11 @@
     "unknownTab": "Unknown page: {{tab}}",
     "unknownTabHint": "Try selecting a menu item from the sidebar.",
     "comingSoon": "Coming soon"
+  },
+  "tagsView": {
+    "close": "Close",
+    "closeOthers": "Close Others",
+    "closeAll": "Close All",
+    "refresh": "Refresh"
   }
 }

@@ -1,9 +1,10 @@
 import { Layout } from 'antd'
 import { useAppSelector } from '@/app/store'
 import { selectSiderCollapsed } from '@/app/slices/theme-slice'
-import SiderMenu from './components/sider-menu'
-import HeaderBar from './components/header-bar'
-import TabRenderer from './components/tab-renderer'
+import SiderMenu from '@/layouts/components/sider-menu'
+import HeaderBar from '@/layouts/components/header-bar'
+import TabRenderer from '@/layouts/components/tab-renderer'
+import TabBar from '@/layouts/components/tab-bar'
 
 const { Header, Sider, Content } = Layout
 
@@ -39,6 +40,7 @@ export default function AppShell() {
         <Header style={{ padding: 0 }}>
           <HeaderBar />
         </Header>
+        <TabBar />
         <Content style={{ padding: 16, overflow: 'auto' }}>
           <TabRenderer />
         </Content>
