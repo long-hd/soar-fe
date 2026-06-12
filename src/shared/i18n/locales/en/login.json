@@ -1,0 +1,11 @@
+{
+  "login": {
+    "title": "Sign in to Soar",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Sign in",
+    "usernameRequired": "Please enter your username",
+    "passwordRequired": "Please enter your password",
+    "failed": "Sign-in failed"
+  }
+}

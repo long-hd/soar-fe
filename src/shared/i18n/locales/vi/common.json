@@ -1,0 +1,18 @@
+{
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "create": "Tạo mới",
+    "search": "Tìm kiếm",
+    "reset": "Đặt lại",
+    "refresh": "Tải lại",
+    "loading": "Đang tải...",
+    "success": "Thành công",
+    "error": "Lỗi",
+    "noData": "Không có dữ liệu",
+    "backToHome": "Quay về trang chủ"
+  }
+}

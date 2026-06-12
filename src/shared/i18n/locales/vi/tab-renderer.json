@@ -1,0 +1,9 @@
+{
+  "tabRenderer": {
+    "welcomeTitle": "Chào mừng đến với Soar",
+    "welcomeSubtitle": "Chọn một mục menu ở thanh bên để bắt đầu.",
+    "unknownTab": "Trang không tồn tại: {{tab}}",
+    "unknownTabHint": "Hãy chọn một mục menu từ thanh bên.",
+    "comingSoon": "Sẽ sớm có"
+  }
+}

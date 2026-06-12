@@ -1,0 +1,9 @@
+{
+  "tabRenderer": {
+    "welcomeTitle": "Welcome to Soar",
+    "welcomeSubtitle": "Select a menu item from the sidebar to get started.",
+    "unknownTab": "Unknown page: {{tab}}",
+    "unknownTabHint": "Try selecting a menu item from the sidebar.",
+    "comingSoon": "Coming soon"
+  }
+}

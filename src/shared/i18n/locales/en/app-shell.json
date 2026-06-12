@@ -1,0 +1,10 @@
+{
+  "appShell": {
+    "logout": "Sign out",
+    "profile": "Profile",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark"
+  }
+}

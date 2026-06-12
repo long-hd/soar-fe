@@ -1,0 +1,10 @@
+{
+  "appShell": {
+    "logout": "Đăng xuất",
+    "profile": "Thông tin cá nhân",
+    "language": "Ngôn ngữ",
+    "theme": "Giao diện",
+    "themeLight": "Sáng",
+    "themeDark": "Tối"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "login": {
+    "title": "Đăng nhập Soar",
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "submit": "Đăng nhập",
+    "usernameRequired": "Vui lòng nhập tên đăng nhập",
+    "passwordRequired": "Vui lòng nhập mật khẩu",
+    "failed": "Đăng nhập thất bại"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "error": {
+    "notFound": "Không tìm thấy trang",
+    "forbidden": "Bạn không có quyền truy cập trang này",
+    "tenantNotFound": "Tenant chưa được cấu hình cho domain này",
+    "networkError": "Lỗi mạng — vui lòng kiểm tra kết nối",
+    "sessionExpired": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại."
+  }
+}
