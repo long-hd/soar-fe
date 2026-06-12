@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { antdApp } from '@/shared/lib/antd-app-ref'
 import type { AxiosError, AxiosResponse } from 'axios'
 
 /**
@@ -37,18 +37,18 @@ export async function errorResponseFulfilled(response: AxiosResponse): Promise<A
 
   // All other non-zero codes — toast and reject
   const msg = body.msg || `Request failed (code ${code})`
-  message.error(msg)
+  antdApp.message.error(msg)
   return Promise.reject(new Error(msg))
 }
 
 /** Network errors, timeouts, HTTP non-2xx without a CommonResult body. */
 export function errorResponseError(error: AxiosError): Promise<never> {
   if (error.code === 'ECONNABORTED' || error.message?.toLowerCase().includes('timeout')) {
-    message.error('Request timeout')
+    antdApp.message.error('Request timeout')
   } else if (!error.response) {
-    message.error('Network error — please check your connection')
+    antdApp.message.error('Network error — please check your connection')
   } else {
-    message.error(`HTTP ${error.response.status}: ${error.response.statusText || 'Error'}`)
+    antdApp.message.error(`HTTP ${error.response.status}: ${error.response.statusText || 'Error'}`)
   }
   return Promise.reject(error)
 }

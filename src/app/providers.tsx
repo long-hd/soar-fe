@@ -4,11 +4,12 @@ import { PersistGate } from 'redux-persist/integration/react'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { I18nextProvider } from 'react-i18next'
-import { ConfigProvider, Spin, theme as antdTheme } from 'antd'
+import { App, ConfigProvider, Spin, theme as antdTheme } from 'antd'
 import i18n from '@/shared/i18n'
 import TenantBootGate from '@/features/auth/components/tenant-boot-gate'
 import { persistor, store, useAppSelector } from './store'
 import { queryClient } from './query-client'
+import { AntdAppRefBridge } from '@/shared/lib/antd-app-ref'
 
 interface AppProvidersProps {
   children: ReactNode
@@ -21,7 +22,10 @@ interface AppProvidersProps {
  *     centered Spin during rehydrate.
  *  3. QueryClientProvider — TanStack Query state.
  *  4. I18nextProvider — i18n context.
- *  5. AntdThemeBridge — antd ConfigProvider subscribing to theme-slice.
+ *  5. AntdThemeBridge — antd ConfigProvider + <App> + AntdAppRefBridge.
+ *     ConfigProvider subscribes to theme-slice; <App> provides message/modal/
+ *     notification context; AntdAppRefBridge mirrors App.useApp() to a module
+ *     ref for non-component callers (interceptors, thunks).
  *     Inside Redux so it can use useAppSelector.
  *  6. TenantBootGate — boot-time tenant resolve + bootstrapAuth.
  *  7. children — RouterProvider rendered by main.tsx.
@@ -72,7 +76,10 @@ function AntdThemeBridge({ children }: { children: ReactNode }) {
         algorithm: mode === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
       }}
     >
-      {children}
+      <App>
+        <AntdAppRefBridge />
+        {children}
+      </App>
     </ConfigProvider>
   )
 }

@@ -3,9 +3,9 @@ import { env } from '@/shared/lib/env'
 import { getTenantId } from '@/shared/lib/tenant'
 import type { AxiosError } from 'axios'
 import axios, { type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
-import { Modal } from 'antd'
 import { formatToken, getRefreshToken, setTokens } from '@/shared/lib/token'
 import { request } from '@/shared/api/http-client'
+import { antdApp } from '@/shared/lib/antd-app-ref'
 
 /**
  * Single-flight token refresh + session-expired handler.
@@ -54,7 +54,7 @@ function handleAuthorized(): Promise<never> {
   }
   isShowingAuthModal = true
 
-  Modal.confirm({
+  antdApp.modal.confirm({
     title: 'Session expired',
     content: 'Your session has expired. Please log in again.',
     okText: 'Log in',

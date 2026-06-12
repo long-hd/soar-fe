@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, Typography, message as antdMessage, theme } from 'antd'
+import { App, Button, Card, Form, Input, Typography, theme } from 'antd'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAppDispatch, useAppSelector } from '@/app/store'
@@ -26,6 +26,7 @@ export default function LoginPage() {
   const status = useAppSelector(selectAuthStatus)
   const isAuthed = useAppSelector(selectIsAuthed)
   const [form] = Form.useForm<AuthLoginReqDTO>()
+  const { message } = App.useApp()
 
   if (isAuthed) {
     const redirect = searchParams.get('redirect')
@@ -39,7 +40,7 @@ export default function LoginPage() {
       const redirect = searchParams.get('redirect')
       navigate(redirect ? decodeURIComponent(redirect) : '/', { replace: true })
     } catch (rejectedMsg) {
-      antdMessage.error(typeof rejectedMsg === 'string' ? rejectedMsg : t('login.failed'))
+      message.error(typeof rejectedMsg === 'string' ? rejectedMsg : t('login.failed'))
     }
   }
 
