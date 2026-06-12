@@ -44,9 +44,11 @@ import type { SortParams } from '@/shared/types/api'
  *     UI isn't currently supported (Q A5.1 = A).
  */
 
+const EMPTY_LIST: never[] = []
+
 export interface UsePagedQueryArgs<TItem, TFilters extends Record<string, unknown>> {
   /** Base query key. Extended internally with `tableState.queryParams` for cache segmentation. */
-  queryKey: readonly unknown[]
+  baseQueryKey: readonly unknown[]
   /** Fetcher. Receives BE-shaped params (`pageNo`, `pageSize`, `sortingFields?`, ...filters). */
   queryFn: (params: UseTableStateResult<TFilters>['queryParams']) => Promise<PageResult<TItem>>
   /** Table state returned by `useTableState`. */
@@ -75,11 +77,11 @@ export function usePagedQuery<
   TItem,
   TFilters extends Record<string, unknown> = Record<string, unknown>,
 >(args: UsePagedQueryArgs<TItem, TFilters>): UsePagedQueryResult<TItem> {
-  const { queryKey, queryFn, tableState, enabled = true } = args
+  const { baseQueryKey, queryFn, tableState, enabled = true } = args
 
   const fullKey = useMemo(
-    () => [...queryKey, tableState.queryParams],
-    [queryKey, tableState.queryParams],
+    () => [...baseQueryKey, tableState.queryParams],
+    [baseQueryKey, tableState.queryParams],
   )
 
   const query = useQuery({
@@ -89,7 +91,7 @@ export function usePagedQuery<
     enabled,
   })
 
-  const items = query.data?.list ?? []
+  const items = query.data?.list ?? (EMPTY_LIST as TItem[])
   const total = query.data?.total ?? 0
 
   const tableProps = useMemo<UsePagedQueryResult<TItem>['tableProps']>(() => {

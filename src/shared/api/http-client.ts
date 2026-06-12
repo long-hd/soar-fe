@@ -28,6 +28,40 @@ function isAuthWhitelisted(url: string | undefined): boolean {
   return AUTH_HEADER_WHITELIST.some(path => url.includes(path))
 }
 
+function isObjectArray(value: unknown): value is Record<string, unknown>[] {
+  return (
+    Array.isArray(value) &&
+    value.length > 0 &&
+    typeof value[0] === 'object' &&
+    value[0] !== null &&
+    !Array.isArray(value[0])
+  )
+}
+function serializeParams(params: Record<string, unknown>): string {
+  const flat: Record<string, unknown> = {}
+  const nestedParts: string[] = []
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null) continue
+    if (isObjectArray(value)) {
+      // sortingFields, createTime ranges as objects, etc.
+      nestedParts.push(
+        qs.stringify(
+          { [key]: value },
+          { allowDots: true, arrayFormat: 'indices', skipNulls: true },
+        ),
+      )
+    } else {
+      flat[key] = value
+    }
+  }
+  const flatPart = qs.stringify(flat, {
+    allowDots: true,
+    arrayFormat: 'repeat', // ids=1&ids=2
+    skipNulls: true,
+  })
+  return [flatPart, ...nestedParts].filter(Boolean).join('&')
+}
+
 /**
  * Soar axios instance. Named `request` (not `http`/`api`) so future wrappers can
  * use those names without collision.
@@ -40,7 +74,7 @@ export const request = axios.create({
   baseURL: env.apiBaseUrl,
   timeout: 30_000,
   paramsSerializer: {
-    serialize: params => qs.stringify(params, { allowDots: true, arrayFormat: 'repeat' }),
+    serialize: serializeParams,
   },
 })
 

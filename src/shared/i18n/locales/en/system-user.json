@@ -1,0 +1,80 @@
+{
+  "systemUser": {
+    "page": {
+      "title": "User Management"
+    },
+    "table": {
+      "username": "Username",
+      "nickname": "Nickname",
+      "deptName": "Department",
+      "mobile": "Mobile",
+      "status": "Status",
+      "createTime": "Created At",
+      "actions": "Actions"
+    },
+    "search": {
+      "username": "Username",
+      "mobile": "Mobile",
+      "status": "Status",
+      "deptId": "Department",
+      "createTime": "Created Range"
+    },
+    "actions": {
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "resetPassword": "Reset Password",
+      "deleteSelected": "Delete {{count}} selected"
+    },
+    "confirm": {
+      "deleteOne": "Delete user \"{{name}}\"?",
+      "deleteMany": "Delete {{count}} users?"
+    },
+    "messages": {
+      "deleteSuccess": "User deleted",
+      "deleteBulkSuccess": "{{count}} users deleted",
+      "statusUpdateSuccess": "Status updated",
+      "createSuccess": "User created",
+      "updateSuccess": "User updated",
+      "resetPasswordSuccess": "Password reset"
+    },
+    "form": {
+      "username": "Username",
+      "password": "Password",
+      "nickname": "Nickname",
+      "deptId": "Department",
+      "postIds": "Posts",
+      "email": "Email",
+      "mobile": "Mobile",
+      "sex": "Gender",
+      "remark": "Remark",
+      "usernamePlaceholder": "4-30 characters",
+      "passwordPlaceholder": "4-20 characters",
+      "nicknamePlaceholder": "Display name",
+      "usernameRequired": "Username is required",
+      "usernameLength": "Username must be 4-30 characters",
+      "passwordRequired": "Password is required",
+      "passwordLength": "Password must be 4-20 characters",
+      "nicknameRequired": "Nickname is required",
+      "emailInvalid": "Invalid email format"
+    },
+    "modal": {
+      "createTitle": "Create User",
+      "editTitle": "Edit User",
+      "discardChanges": "Discard unsaved changes?",
+      "discardConfirm": "Discard",
+      "loading": "Loading..."
+    },
+    "resetPassword": {
+      "title": "Reset password for {{username}}",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "newPasswordPlaceholder": "4-20 characters",
+      "confirmPasswordPlaceholder": "Re-enter the new password",
+      "newPasswordRequired": "Please enter the new password",
+      "newPasswordLength": "Password must be 4-20 characters",
+      "confirmPasswordRequired": "Please confirm the password",
+      "confirmPasswordMismatch": "Passwords do not match"
+    }
+  }
+}

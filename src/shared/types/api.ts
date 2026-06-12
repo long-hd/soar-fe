@@ -25,3 +25,12 @@ export interface SortParams {
   field: string
   order: 'asc' | 'desc'
 }
+
+export interface PageParams {
+  pageNo: number
+  pageSize: number
+}
+
+export interface SortablePageParam extends PageParams {
+  sortingFields?: SortParams[]
+}

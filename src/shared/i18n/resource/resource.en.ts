@@ -5,6 +5,7 @@ import enAppShell from '../locales/en/app-shell.json'
 import enError from '../locales/en/error.json'
 import enTabRenderer from '../locales/en/tab-renderer.json'
 import enTagsView from '../locales/en/tags-view.json'
+import enSystemUser from '../locales/en/system-user.json'
 
 export default {
   ...enCommon,
@@ -13,4 +14,5 @@ export default {
   ...enError,
   ...enTabRenderer,
   ...enTagsView,
+  ...enSystemUser,
 }

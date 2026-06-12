@@ -5,6 +5,7 @@ import viAppShell from '../locales/vi/app-shell.json'
 import viError from '../locales/vi/error.json'
 import viTabRenderer from '../locales/vi/tab-renderer.json'
 import viTagsView from '../locales/vi/tags-view.json'
+import viSystemUser from '../locales/vi/system-user.json'
 
 export default {
   ...viCommon,
@@ -13,4 +14,5 @@ export default {
   ...viError,
   ...viTabRenderer,
   ...viTagsView,
+  ...viSystemUser,
 }
