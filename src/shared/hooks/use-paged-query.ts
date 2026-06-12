@@ -141,13 +141,12 @@ export function usePagedQuery<
   }, [items, query.isFetching, tableState, total])
 
   return {
+    // query state
+    ...query,
+    // pagination data
     data: items,
     total,
-    isLoading: query.isLoading,
-    isFetching: query.isFetching,
-    isError: query.isError,
-    error: query.error,
-    refetch: query.refetch,
+    // table props
     tableProps,
   }
 }
