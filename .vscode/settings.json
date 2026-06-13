@@ -21,6 +21,6 @@
     "*.ts": "$(capture).test.ts, $(capture).test.tsx",
     "*.tsx": "$(capture).test.ts, $(capture).test.tsx",
     "*.env": "$(capture).env.*",
-    "package.json": "pnpm-lock.yaml,yarn.lock,LICENSE,README*,CHANGELOG*,CNAME,.gitattributes,.eslintrc-auto-import.json,.gitignore,.editorconfig,prettier.config.js,.prettierrc,stylelint.config.js,commitlint.config.js,.stylelintignore,.prettierignore,.gitpod.yml,.eslintrc.js,eslint.config.js,.eslintignore"
+    "package.json": "pnpm-lock.yaml,yarn.lock,LICENSE,CHANGELOG*,CNAME,.gitattributes,.eslintrc-auto-import.json,.gitignore,.editorconfig,prettier.config.js,.prettierrc,stylelint.config.js,commitlint.config.js,.stylelintignore,.prettierignore,.gitpod.yml,.eslintrc.js,eslint.config.js,.eslintignore"
   }
 }

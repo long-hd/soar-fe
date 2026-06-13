@@ -1,0 +1,80 @@
+{
+  "systemUser": {
+    "page": {
+      "title": "Quản lý người dùng"
+    },
+    "table": {
+      "username": "Tên đăng nhập",
+      "nickname": "Tên hiển thị",
+      "deptName": "Phòng ban",
+      "mobile": "Số điện thoại",
+      "status": "Trạng thái",
+      "createTime": "Ngày tạo",
+      "actions": "Thao tác"
+    },
+    "search": {
+      "username": "Tên đăng nhập",
+      "mobile": "Số điện thoại",
+      "status": "Trạng thái",
+      "deptId": "Phòng ban",
+      "createTime": "Khoảng thời gian"
+    },
+    "actions": {
+      "create": "Tạo mới",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "resetPassword": "Đặt lại mật khẩu",
+      "deleteSelected": "Xóa {{count}} mục đã chọn"
+    },
+    "confirm": {
+      "deleteOne": "Xóa người dùng \"{{name}}\"?",
+      "deleteMany": "Xóa {{count}} người dùng?"
+    },
+    "messages": {
+      "deleteSuccess": "Đã xóa người dùng",
+      "deleteBulkSuccess": "Đã xóa {{count}} người dùng",
+      "statusUpdateSuccess": "Đã cập nhật trạng thái",
+      "createSuccess": "Đã tạo người dùng",
+      "updateSuccess": "Đã cập nhật người dùng",
+      "resetPasswordSuccess": "Đã đặt lại mật khẩu"
+    },
+    "form": {
+      "username": "Tên đăng nhập",
+      "password": "Mật khẩu",
+      "nickname": "Tên hiển thị",
+      "deptId": "Phòng ban",
+      "postIds": "Chức vụ",
+      "email": "Email",
+      "mobile": "Số điện thoại",
+      "sex": "Giới tính",
+      "remark": "Ghi chú",
+      "usernamePlaceholder": "4-30 ký tự",
+      "passwordPlaceholder": "4-20 ký tự",
+      "nicknamePlaceholder": "Tên hiển thị",
+      "usernameRequired": "Vui lòng nhập tên đăng nhập",
+      "usernameLength": "Tên đăng nhập phải có 4-30 ký tự",
+      "passwordRequired": "Vui lòng nhập mật khẩu",
+      "passwordLength": "Mật khẩu phải có 4-20 ký tự",
+      "nicknameRequired": "Vui lòng nhập tên hiển thị",
+      "emailInvalid": "Email không hợp lệ"
+    },
+    "modal": {
+      "createTitle": "Tạo người dùng",
+      "editTitle": "Chỉnh sửa người dùng",
+      "discardChanges": "Hủy các thay đổi chưa lưu?",
+      "discardConfirm": "Hủy bỏ",
+      "loading": "Đang tải..."
+    },
+    "resetPassword": {
+      "title": "Đặt lại mật khẩu cho {{username}}",
+      "newPassword": "Mật khẩu mới",
+      "confirmPassword": "Xác nhận mật khẩu",
+      "newPasswordPlaceholder": "4-20 ký tự",
+      "confirmPasswordPlaceholder": "Nhập lại mật khẩu mới",
+      "newPasswordRequired": "Vui lòng nhập mật khẩu mới",
+      "newPasswordLength": "Mật khẩu phải có 4-20 ký tự",
+      "confirmPasswordRequired": "Vui lòng xác nhận mật khẩu",
+      "confirmPasswordMismatch": "Mật khẩu không khớp"
+    }
+  }
+}
