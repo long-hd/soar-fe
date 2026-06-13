@@ -788,7 +788,7 @@ export function <ENTITY>FormModal({ open, id, onClose }: <ENTITY>FormModalProps)
 **Template skeleton** (full reference: `_example/list-page.tsx`):
 
 ```tsx
-import { ReloadOutlined, SearchOutlined } from '@ant-design/icons'
+import { Icon } from '@iconify/react'
 import { App, Button, Card, Space, Switch, Table, Tooltip, type TableColumnsType } from 'antd'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -917,11 +917,11 @@ export function <ENTITY>ListPage() {
         </Space>
         <Space>
           <Tooltip title={searchVisible ? t('common.hideSearch') : t('common.showSearch')}>
-            <Button icon={<SearchOutlined />} type={searchVisible ? 'default' : 'primary'}
+            <Button icon={<Icon icon="mdi:filter" />} type={searchVisible ? 'default' : 'primary'}
               onClick={() => setSearchVisible(v => !v)} />
           </Tooltip>
           <Tooltip title={t('common.refresh')}>
-            <Button icon={<ReloadOutlined />} loading={tableProps.loading} onClick={() => refetch()} />
+            <Button icon={<Icon icon="mdi:reload" />} loading={tableProps.loading} onClick={() => refetch()} />
           </Tooltip>
         </Space>
       </Space>

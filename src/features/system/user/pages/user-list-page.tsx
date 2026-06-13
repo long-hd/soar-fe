@@ -1,4 +1,4 @@
-import { App, Button, Card, Space, Switch, Table, type TableColumnsType } from 'antd'
+import { App, Button, Card, Space, Switch, Table, Tooltip, type TableColumnsType } from 'antd'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -237,13 +237,17 @@ export function UserListPage() {
           </HasPermission>
         </Space>
 
-        <Space style={{ marginBottom: 16 }}>
-          <Button
-            type="default"
-            icon={<Icon icon="mdi:filter" />}
-            onClick={() => setSearchVisible(v => !v)}
-          />
-          <Button type="default" icon={<Icon icon="mdi:reload" />} onClick={() => refetch()} />
+        <Space>
+          <Tooltip title={searchVisible ? t('common.hideSearch') : t('common.showSearch')}>
+            <Button icon={<Icon icon="mdi:filter" />} onClick={() => setSearchVisible(v => !v)} />
+          </Tooltip>
+          <Tooltip title={t('common.refresh')}>
+            <Button
+              icon={<Icon icon="mdi:reload" />}
+              loading={tableProps.loading}
+              onClick={() => refetch()}
+            />
+          </Tooltip>
         </Space>
       </div>
 

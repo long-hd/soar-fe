@@ -9,6 +9,8 @@
     "search": "Search",
     "reset": "Reset",
     "refresh": "Refresh",
+    "showSearch": "Show search",
+    "hideSearch": "Hide search",
     "loading": "Loading...",
     "success": "Success",
     "error": "Error",

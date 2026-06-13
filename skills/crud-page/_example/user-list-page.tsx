@@ -18,6 +18,7 @@ import { UserSearchForm } from '@/features/system/user/components/user-search-fo
 import { UserFormModal } from '@/features/system/user/components/user-form-modal'
 import { UserResetPasswordModal } from '@/features/system/user/components/user-reset-password-modal'
 import { sysUserQueryKey, useUserMutations } from '@/features/system/user/hooks'
+import { Icon } from '@iconify/react'
 
 /**
  * User Management list page.
@@ -26,7 +27,7 @@ import { sysUserQueryKey, useUserMutations } from '@/features/system/user/hooks'
  *  - useTableState — in-memory filters/page/sort. Activity keep-alive preserves
  *    across tab switches. F5 resets (no URL sync per Q1=B).
  *  - usePagedQuery — fetches `/page` + builds antd tableProps.
- *  - 3 useMutation: delete, deleteList, updateStatus. Invalidate USER_QUERY_KEY
+ *  - 3 useMutation: remove, removeMany, updateStatus. Invalidate USER_QUERY_KEY
  *    on success → list refetches.
  *
  * Modals (Create/Edit form, Reset Password) are stubbed in T2.2 with `message.info`
@@ -46,6 +47,7 @@ export function UserListPage() {
   const { modal } = App.useApp()
   const currentUser = useAppSelector(selectUser)
 
+  const [searchVisible, setSearchVisible] = useState(true)
   const tableState = useTableState<UserFilters>({}, INITIAL_SORT)
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([])
   const [formModal, setFormModal] = useState<{ open: boolean; userId?: number }>({
@@ -56,7 +58,7 @@ export function UserListPage() {
     user: UserRespDTO | null
   }>({ open: false, user: null })
 
-  const { tableProps } = usePagedQuery<UserRespDTO, UserFilters>({
+  const { tableProps, refetch } = usePagedQuery<UserRespDTO, UserFilters>({
     baseQueryKey: sysUserQueryKey.all,
     queryFn: userApi.page,
     tableState,
@@ -193,36 +195,57 @@ export function UserListPage() {
 
   return (
     <Card>
-      <UserSearchForm
-        loading={!!tableProps.loading}
-        onSearch={filters => {
-          setSelectedRowKeys([])
-          tableState.setFilters(filters)
+      <div
+        style={{
+          overflow: 'hidden',
+          transition: 'max-height 300ms ease, opacity 200ms ease, margin-bottom 300ms ease',
+          maxHeight: searchVisible ? 600 : 0, // 600 = safely above form height (kể cả wrap)
+          opacity: searchVisible ? 1 : 0,
+          marginBottom: searchVisible ? 16 : 0,
         }}
-        onReset={() => {
-          setSelectedRowKeys([])
-          tableState.clearFilters()
-        }}
-      />
+      >
+        <UserSearchForm
+          loading={!!tableProps.loading}
+          onSearch={filters => {
+            setSelectedRowKeys([])
+            tableState.setFilters(filters)
+          }}
+          onReset={() => {
+            setSelectedRowKeys([])
+            tableState.clearFilters()
+          }}
+        />
+      </div>
 
-      <Space style={{ marginBottom: 16 }}>
-        <HasPermission code={USER_PERMISSIONS.create}>
-          <Button type="primary" onClick={handleCreate}>
-            {t('systemUser.actions.create')}
-          </Button>
-        </HasPermission>
-        <HasPermission code={USER_PERMISSIONS.delete}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Space style={{ marginBottom: 16 }}>
+          <HasPermission code={USER_PERMISSIONS.create}>
+            <Button type="primary" onClick={handleCreate}>
+              {t('systemUser.actions.create')}
+            </Button>
+          </HasPermission>
+          <HasPermission code={USER_PERMISSIONS.delete}>
+            <Button
+              danger
+              disabled={selectedRowKeys.length === 0 || removeMany.isPending}
+              onClick={handleDeleteBulk}
+            >
+              {t('systemUser.actions.deleteSelected', {
+                count: selectedRowKeys.length,
+              })}
+            </Button>
+          </HasPermission>
+        </Space>
+
+        <Space style={{ marginBottom: 16 }}>
           <Button
-            danger
-            disabled={selectedRowKeys.length === 0 || removeMany.isPending}
-            onClick={handleDeleteBulk}
-          >
-            {t('systemUser.actions.deleteSelected', {
-              count: selectedRowKeys.length,
-            })}
-          </Button>
-        </HasPermission>
-      </Space>
+            type="default"
+            icon={<Icon icon="mdi:filter" />}
+            onClick={() => setSearchVisible(v => !v)}
+          />
+          <Button type="default" icon={<Icon icon="mdi:reload" />} onClick={() => refetch()} />
+        </Space>
+      </div>
 
       <Table<UserRespDTO>
         {...tableProps}

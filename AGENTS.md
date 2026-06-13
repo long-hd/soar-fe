@@ -1,8 +1,8 @@
 # AGENTS.md — Soar Frontend
 
 > Cross-tool standard. Read by Claude Code, Cursor, Codex, and any AI coding agent.
-> Authoritative architecture spec: `soar-be/docs/FE_Admin_Architecture_Plan.md`. Read it first.
-> Last reviewed: 2026-06-10 (Phase 5A complete). See `PHASE_5A_SUMMARY.md` for current baseline.
+> Authoritative architecture spec: `docs/plans/fe-admin-architecture-plan.md`. Read it first.
+> Last reviewed: 2026-06-13 (Phase 5B Task 2 complete). See `docs/phases/phase-5a-summary.md` for the Phase 5A baseline; in-progress Phase 5B tasks documented under `docs/decisions/tasks/5b/`.
 
 ## Project Overview
 
@@ -19,7 +19,7 @@ Paired with `soar-be` (Spring Boot backend). Multi-tenant. Permission-driven UI 
 - **TanStack Query v5** (server state, cache, dedupe)
 - **react-router-dom v7** (thin role: login vs main shell only)
 - **axios** (HTTP, single-flight refresh token)
-- **i18next** + **react-i18next** (key-driven from day 1)
+- **i18next** + **react-i18next** (key-driven, per-domain JSON files merged into single `translation` namespace)
 - **dayjs** (date/time, antd v6 default)
 - **@iconify/react** (icons; matches yudao seed strings; offline bundle)
 - **Tailwind CSS v4** (utility classes for layout primitives ONLY — no theme-aware colors)
@@ -50,59 +50,67 @@ src/
 ├── app/                        # App infrastructure
 │   ├── store.ts                # Redux store + persist config
 │   ├── query-client.ts         # TanStack Query client
-│   ├── providers.tsx           # Composed providers
+│   ├── providers.tsx           # Composed providers (incl. antd <App>)
 │   └── slices/
-│       ├── auth-slice.ts       # user, tokens, permissions, menus (persisted to localStorage)
-│       ├── tags-view-slice.ts  # openTabs + activeTabId (persisted to sessionStorage, per-browser-tab)
+│       ├── auth-slice.ts       # user, tokens, permissions, menus (localStorage)
+│       ├── tags-view-slice.ts  # openTabs + activeTabId (sessionStorage)
 │       └── theme-slice.ts      # 'light' | 'dark'
 │
 ├── shared/                     # Cross-cutting, reusable
 │   ├── api/
-│   │   ├── http-client.ts      # axios instance named `request`
-│   │   ├── types.ts            # CommonResult<T>, PageResult<T>, PageParam, AuthTokensDTO
+│   │   ├── http-client.ts      # axios instance `request` + custom paramsSerializer
+│   │   ├── types.ts            # CommonResult<T>, PageResult<T>, PageParam, SortParams, AuthTokensDTO
 │   │   └── interceptors/
 │   │       ├── auth-interceptor.ts   # 401 → single-flight refresh + replay queue
-│   │       └── error-interceptor.ts  # CommonResult code validation, non-zero toast (NO unwrap)
+│   │       └── error-interceptor.ts  # CommonResult code validation, non-zero toast via antdApp
 │   ├── components/
-│   │   ├── has-permission.tsx
-│   │   ├── dict-tag.tsx
-│   │   ├── dict-select.tsx
-│   │   └── tree-select.tsx
+│   │   ├── dict-tag.tsx        # colored badge from dict
+│   │   ├── dict-select.tsx     # antd Select bound to dict
+│   │   ├── dept-tree-select.tsx
+│   │   └── post-select.tsx
 │   ├── hooks/
-│   │   ├── use-dict.ts
+│   │   ├── use-dict-data.ts
+│   │   ├── use-dept-tree.ts
+│   │   ├── use-post-list.ts
 │   │   ├── use-paged-query.ts
-│   │   └── use-permission.ts
+│   │   └── use-table-state.ts
 │   ├── lib/
 │   │   ├── env.ts
 │   │   ├── tenant.ts           # localStorage I/O for tenantId — NO env var fallback
 │   │   ├── token.ts            # localStorage I/O for access + refresh tokens
 │   │   ├── format.ts           # formatDate, formatDateTime
-│   │   └── permission-matcher.ts
+│   │   ├── permission-matcher.ts
+│   │   └── antd-app-ref.ts     # antdApp proxy for non-React callers
 │   └── i18n/
-│       ├── index.ts
-│       └── locales/{en,vi,zh-CN}.json
+│       ├── index.ts            # i18next init + per-domain merge
+│       ├── resource/
+│       │   ├── resource.en.ts  # spread merge of locales/en/*.json
+│       │   └── resource.vi.ts
+│       ├── types.d.ts          # type augmentation from JSON imports
+│       └── locales/
+│           ├── en/             # common.json, app-shell.json, system-user.json, ...
+│           └── vi/             # mirror
 │
 ├── features/                   # Business code by domain
 │   ├── auth/
-│   │   ├── api/
-│   │   │   └── auth-api.ts     # login, logout, refresh, getPermissionInfo, getTenantByWebsite
-│   │   ├── components/
-│   │   │   └── tenant-boot-gate.tsx
-│   │   └── types.ts            # AuthLoginReqDTO, AuthLoginRespDTO, AuthPermissionInfoRespDTO, ...
+│   │   ├── api/index.ts
+│   │   ├── components/tenant-boot-gate.tsx
+│   │   └── types.ts
 │   ├── permission/
-│   │   └── hooks/
-│   │       └── use-permission.ts   # Phase 5B
+│   │   ├── components/has-permission.tsx
+│   │   ├── hooks/use-permission.ts
+│   │   └── index.ts            # barrel — single feature with cross-cutting role
 │   ├── system/
-│   │   ├── user/
-│   │   │   ├── api/
-│   │   │   │   └── user-api.ts        # userApi.page/get/create/update/delete
-│   │   │   ├── components/
-│   │   │   │   ├── user-list-page.tsx
-│   │   │   │   ├── user-detail-page.tsx
+│   │   ├── user/               # canonical CRUD feature shape
+│   │   │   ├── api/index.ts                              # userApi
+│   │   │   ├── components/                               # sub-pieces composed by page
 │   │   │   │   ├── user-form-modal.tsx
+│   │   │   │   ├── user-reset-password-modal.tsx
 │   │   │   │   └── user-search-form.tsx
-│   │   │   ├── hooks/
-│   │   │   └── types.ts               # UserListItemDTO, UserCreateReqDTO, ...
+│   │   │   ├── constants.ts                              # USER_PERMISSIONS, USER_DICT_TYPES, UserStatus
+│   │   │   ├── hooks/index.ts                            # sysUserQueryKey, useUserDetailQuery, useUserMutations
+│   │   │   ├── pages/user-list-page.tsx                  # orchestrating component
+│   │   │   └── types.ts                                  # UserRespDTO, UserSaveReqDTO, UserFilters, ...
 │   │   ├── role/
 │   │   ├── dept/
 │   │   ├── menu/
@@ -110,41 +118,34 @@ src/
 │   │   └── tenant/
 │   └── infra/
 │
-├── pages/                      # Thin wrappers (~10 lines each) — dispatcher targets for import.meta.glob
-│   ├── system/
-│   │   ├── user/
-│   │   │   ├── index.tsx       # → <UserListPage />
-│   │   │   └── detail.tsx      # → <UserDetailPage />
-│   │   ├── role/
-│   │   │   └── index.tsx
-│   │   └── ...
-│   ├── infra/
-│   ├── login/
-│   │   └── login-page.tsx
-│   └── error/
-│       ├── not-found.tsx
-│       ├── forbidden.tsx
-│       └── tenant-error.tsx
+├── pages/                      # Thin wrappers — dispatcher targets for import.meta.glob
+│   ├── system/user/index.tsx   # → <UserListPage />
+│   ├── system/role/index.tsx
+│   ├── login/login-page.tsx
+│   └── error/{not-found,forbidden,tenant-error}.tsx
 │
 ├── layouts/
 │   ├── app-shell.tsx           # main shell (header + sider + content). NO <Outlet> for menu content.
 │   ├── blank-layout.tsx        # for login/forbidden/tenant-error
 │   └── components/
 │       ├── sider-menu.tsx
-│       ├── tab-bar.tsx         # Phase 5B
+│       ├── tab-bar.tsx
 │       ├── header-bar.tsx
-│       └── tab-renderer.tsx    # import.meta.glob loader + Suspense (Activity retrofit Phase 5C)
+│       └── tab-renderer.tsx    # import.meta.glob + <Activity> keep-alive
 │
 └── routes/
     ├── router.tsx              # top-level createBrowserRouter — 4 routes
-    └── guards/
-        └── auth-guard.tsx
+    └── guards/auth-guard.tsx
 ```
 
 **Feature folder rules**:
 
-- `api/<entity>-api.ts` (named file), NOT `api/index.ts`.
-- `types.ts` flat by default. Use `types/<entity>-types.ts` subfolder only when feature has >1 entity OR types file >200 lines.
+- `api/index.ts` — single file per feature. Multiple files only when a feature genuinely spans multiple entities (rare).
+- `components/` — sub-pieces composed by the page (modals, forms, columns). NOT the orchestrating component.
+- `pages/` — the orchestrating page component (one per top-level entity). Page imports components, never reverse.
+- `hooks/index.ts` — query keys + queries + collected mutations.
+- `constants.ts` — permission codes, dict types, enum value mirrors.
+- `types.ts` — flat by default. Use `types/<entity>-types.ts` subfolder only when feature has >1 entity OR file >200 lines.
 - No `index.ts` barrel at feature root — pages import explicit paths.
 
 ## Architecture Rules
@@ -155,14 +156,14 @@ src/
 - `pages/` → `features/` ✅ (pages are thin wrappers)
 - `layouts/` → `features/` → `shared/` ✅
 - `shared/` → `features/` ❌
-- `features/A` → `features/B` ❌ (move to `shared/` if cross-feature)
+- `features/A` → `features/B` ❌ (move to `shared/` if cross-feature; exception: `features/permission` is consumed by other features)
 
 ### State Management Split
 
 - **Redux Toolkit**: auth, permissions, menu tree, open tabs, theme
 - **TanStack Query**: all server data (lists, details, mutations)
 - **antd Form**: form state (local to each form)
-- **`useState` in component**: table state (pageNo, pageSize, filters, sort) — **NOT URL-synced** (see decision §11.7 in Plan)
+- **`useTableState` hook (useState internally)**: table state (pageNo, pageSize, filters, sort) — **NOT URL-synced** (see decision §11.7 in Plan)
 
 ### Persistence Split
 
@@ -172,7 +173,7 @@ src/
 
 ### URL pattern — flat with `?tab=<tab_key>`
 
-This is critical and unusual. Read carefully.
+This is critical and unusual. Read carefully. See also ADR 0001.
 
 - **All menu-triggered pages live at the single root path `/`**. No `/system/user`, no `/admin/dashboard`.
 - URL shape: `/?tab=<tab_key>&<arbitrary params>`
@@ -181,190 +182,184 @@ This is critical and unusual. Read carefully.
 - `react-router-dom` is used only for `/login`, `/forbidden`, `/`, `/*`. Four top-level routes total.
 - **`<Outlet>` is NOT used inside the main shell** — AppShell renders tabs directly from Redux state using a glob loader.
 - Page file lookup: BE menu DTO returns `component` field (e.g., `system/user/index`). `tab-renderer.tsx` runs `import.meta.glob('/src/pages/**/*.tsx')` and resolves the path. Two dispatcher keys: `tab_key` (URL) + `component` (file path).
-- See Plan §3 and §6 for the full mechanism and reasoning.
+- See Plan §3 and §6 for the full mechanism.
 
 ### Tabs view with React 19.2 `<Activity>`
 
 - Each open tab is a record in `tags-view-slice` (Redux), rendered inside `<Activity mode={isActive ? 'visible' : 'hidden'}>` if `menu.keepAlive` is true.
 - Tabs persisted to **sessionStorage** (not localStorage) via redux-persist — per-browser-tab isolation.
 - F5 keeps tabs. New browser-tab gets a fresh state.
-- **Phased rollout**:
-  - **Phase 5A**: NO tabs UI. `tab-renderer.tsx` does plain swap on URL change.
-  - **Phase 5B**: TabBar UI (open/close/active), still plain swap.
-  - **Phase 5C**: `<Activity>` retrofit for keep-alive.
-- Do NOT ship `<Activity>` before 5C.
+- Activity keep-alive is ACTIVE (shipped Phase 5B foundation block A0).
 
 ### Permission-Driven UI
 
 - `<HasPermission code="system:user:create">` — renders children only if user has permission.
-- `usePermission()` hook — exposes `hasPermission(code)` method. Super admin wildcard `*:*:*` is handled inside (defensive match — BE currently enumerates all codes, but matcher accepts wildcard if BE adds it later).
+- `usePermission()` hook — exposes `hasPermission(code)` method. Super admin wildcard `*:*:*` is handled inside.
 - Sidebar rendered dynamically from menu tree API (`/get-permission-info`).
 - AppShell looks up `menu.tab_key` from menus loaded post-login. URL with unknown `tab_key` → render not-found in content area (do NOT navigate `/forbidden` — that's for missing role, not missing tab).
+- Both `HasPermission` + `usePermission` exported from `@/features/permission` barrel.
 
 ### API Conventions
 
 - All API calls go through the axios instance `request` from `shared/api/http-client.ts`.
+- Custom `paramsSerializer` detects primitive arrays (`repeat` format) vs POJO arrays (`allowDots+indices`) per-key. See ADR 0006.
 - Interceptors:
-  - **Request**: attach `tenant-id` header (`getTenantId()` from `shared/lib/tenant.ts`) + `Authorization: Bearer <access>`. If `tenantId` is null (boot before resolve), do not attach — the only allowed request without `tenant-id` is `/system/tenant/get-by-website` (marked `@TenantIgnore` on BE).
-  - **Response — auth-interceptor**: on `CommonResult.code === 401`, run single-flight refresh (port pattern from yudao `service.ts` — module-level `isRefreshing` + `requestQueue`). Replay queued requests with new token.
-  - **Response — error-interceptor**: validate `CommonResult.code`. On `code === 0`, pass response through unchanged (do NOT unwrap — callers explicitly `.data.data`). On `code === 401`, delegated to auth-interceptor for single-flight refresh. Other non-zero codes → toast `msg` + reject with `Error(msg)`.
-- API functions in `features/{module}/{entity}/api/<entity>-api.ts`. Each method declares its unwrapped return type and performs `res.data.data` as the last expression.
-- TanStack Query keys: arrays with feature namespace, e.g., `['user', 'list', params]`, `['user', 'detail', id]`. Do NOT bake URL paths into keys.
+  - **Request**: attach `tenant-id` header + `Authorization: Bearer <access>`. If `tenantId` null, do not attach — the only allowed request without `tenant-id` is `/system/tenant/get-by-website`.
+  - **Response — auth-interceptor**: on `CommonResult.code === 401`, run single-flight refresh + replay queued requests.
+  - **Response — error-interceptor**: validate `CommonResult.code`. On `code === 0`, pass through (callers explicitly `.then(r => r.data.data)`). Non-zero codes → toast `msg` via `antdApp.message.error` + reject with `Error(msg)`.
+- API functions in `features/{module}/{entity}/api/index.ts`. Each method declares unwrapped return type and ends with `.then(r => r.data.data)`. See ADR 0002.
+- TanStack Query keys: object factory `sysXxxQueryKey = { all: [...], detail: id => [...] }`. NOT inline arrays at usage sites.
 - Backend action-path pattern (NOT REST):
   - `GET /admin-api/{module}/{entity}/page?pageNo=1&pageSize=10&...`
   - `GET /admin-api/{module}/{entity}/get?id=`
   - `POST /admin-api/{module}/{entity}/create`
   - `PUT /admin-api/{module}/{entity}/update`
   - `DELETE /admin-api/{module}/{entity}/delete?id=`
+  - `DELETE /admin-api/{module}/{entity}/delete-list?ids=` (optional)
+  - `PUT /admin-api/{module}/{entity}/update-status` (optional)
+  - `PUT /admin-api/{module}/{entity}/update-password` (optional, user-like only)
 - Pagination params: `pageNo` (1-based), `pageSize`. NOT `page`/`size`/`current`.
 - File upload: `POST /admin-api/infra/file/upload` (multipart, field `file` + optional `directory`); returns access URL.
 
 ### Tenant-id resolution
 
-- Every authenticated request sends `tenant-id` header. Helper: `getTenantId()` reads `localStorage`. **No env var fallback** — if storage is empty, the request should not be sent (boot order must resolve tenant first).
-- **App boot flow**: `tenant-boot-gate.tsx` mounts first, calls `GET /admin-api/system/tenant/get-by-website?website=${location.host}`. On success, `setTenantId(res.id)`. On miss (returns null), render `tenant-error.tsx` page.
-- The endpoint `/get-by-website` is marked `@PermitAll` + `@TenantIgnore` on BE — it is the only request that runs without a `tenant-id` header.
-- Login itself REQUIRES `tenant-id`. BE will reject with 400 if missing.
-- For dev: seed `system_tenant.websites` with `localhost:5173`, `localhost:4173`, plus any port used. For prod: append production hostname. Single row with multi-host array is the norm for single-tenant deployments; add rows when expanding to multi-tenant.
+- Every authenticated request sends `tenant-id` header. Helper: `getTenantId()` reads `localStorage`. **No env var fallback** — if storage is empty, request should not be sent.
+- **App boot flow**: `tenant-boot-gate.tsx` mounts first, calls `GET /admin-api/system/tenant/get-by-website?website=${location.host}`. On success, `setTenantId(res.id)`. On miss, render `tenant-error.tsx`.
+- The endpoint `/get-by-website` is `@PermitAll` + `@TenantIgnore` on BE — only request that runs without `tenant-id`.
+- Login itself REQUIRES `tenant-id`. BE rejects with 400 if missing.
 
 ### Refresh token — single-flight
 
-Port pattern from yudao `service.ts`. Module-level state `isRefreshing` + `requestQueue`. First 401 triggers refresh; subsequent 401s during refresh are queued and replayed. Refresh request itself uses a bare axios call (no interceptor chain) to avoid recursion. Soar adds a `_isRetry` flag on the request config to prevent infinite loop if BE keeps returning 401 after refresh — fails fast with `handleAuthorized()` (Modal.confirm + dispatch logout via dynamic import). See Plan §7.1 for full code.
+Port pattern from yudao `service.ts`. Module-level `isRefreshing` + `requestQueue`. First 401 triggers refresh; subsequent 401s queue + replay. Refresh request uses bare axios (no interceptor chain) to avoid recursion. `_isRetry` flag prevents infinite loop. Failure → `handleAuthorized()` (Modal.confirm via `antdApp` + dispatch logout via dynamic import).
+
+### antd App API — never static `message`/`Modal`
+
+Components use `App.useApp()`. Non-React modules use `antdApp` proxy from `@/shared/lib/antd-app-ref`. NEVER `import { message, Modal } from 'antd'` for actual usage (only types). See CONVENTIONS §Patterns from Task 2.
 
 ## Component Conventions
 
 ### Shared Components (in `shared/components/`)
 
-- `<HasPermission code="..." fallback={...}>` — permission gate
 - `<DictTag dictType="..." value={...}>` — colored badge from dict data
 - `<DictSelect dictType="...">` — antd Select bound to a dict type
-- `<TreeSelect>` — wrapper for dept/menu tree
+- `<DeptTreeSelect>` — dept tree picker
+- `<PostSelect mode="single|multiple">` — post picker
 
-### Page Structure Pattern
+### Permission gate (in `features/permission/`)
 
-Each CRUD page follows:
+- `<HasPermission code="..." fallback={...}>` — permission-gated rendering
+- `usePermission()` — programmatic check, returns `hasPermission(code)`
 
-```tsx
-// File: features/system/user/components/user-list-page.tsx
+### CRUD Page Pattern
 
-/** User management list page. */
-export default function UserListPage() {
-  const params = useContext(TabParamsContext) // params from ?tab=...&...
-  const can = usePermission()
-  const { t } = useTranslation()
+For building new CRUD admin pages, follow the skill at `skills/crud-page/`:
 
-  const [tableState, setTableState] = useState({ pageNo: 1, pageSize: 10 })
-  const [filters, setFilters] = useState<UserSearchForm>({})
-
-  const { data, isLoading, tableProps } = usePagedQuery({
-    queryKey: ['user', 'list', { ...tableState, ...filters }],
-    queryFn: () => userApi.page({ ...tableState, ...filters }),
-    state: tableState,
-    setState: setTableState,
-  })
-
-  const [modal, setModal] = useState<{ open: boolean; mode: 'create' | 'edit'; id?: number }>({
-    open: false,
-    mode: 'create',
-  })
-
-  return (
-    <Card>
-      <UserSearchForm value={filters} onChange={setFilters} />
-      <Space style={{ marginBottom: 16 }}>
-        <HasPermission code="system:user:create">
-          <Button type="primary" onClick={() => setModal({ open: true, mode: 'create' })}>
-            {t('common.create')}
-          </Button>
-        </HasPermission>
-      </Space>
-      <Table {...tableProps} columns={columns} rowKey="id" />
-      <UserFormModal {...modal} onClose={() => setModal(m => ({ ...m, open: false }))} />
-    </Card>
-  )
-}
+```
+skills/crud-page/
+├── README.md           # Entry point + agent prompt template
+├── be-extraction.md    # BE controller → FE inputs mapping
+├── decisions.md        # Decision tree for variants
+├── steps.md            # 9-step build templates
+└── _example/           # Concrete reference (sanitized system/user)
 ```
 
-### Thin wrapper in `pages/`
+**Agent workflow**: read `README.md` → `be-extraction.md` → `decisions.md` → `steps.md`, with `_example/` as reference. The agent prompt template in README is copy-paste ready.
+
+The orchestrating page component lives at `features/<module>/<entity>/pages/<entity>-list-page.tsx`. The thin wrapper at `src/pages/<module>/<entity>/index.tsx` (matches `system_menu.component`) is one-line re-export:
 
 ```tsx
-// File: src/pages/system/user/index.tsx
-import UserListPage from '@/features/system/user/components/user-list-page'
-import { useDocumentTitle } from '@/shared/hooks/use-document-title'
-import { useTranslation } from 'react-i18next'
+import { UserListPage } from '@/features/system/user/pages/user-list-page'
 
-export default function Page() {
-  const { t } = useTranslation()
-  useDocumentTitle(t('system.user.title'))
+export default function SystemUserPage() {
   return <UserListPage />
 }
 ```
 
-**Pages exist solely to be discoverable by `import.meta.glob('/src/pages/**/\*.tsx')`.** Keep them under 20 lines. All logic lives in `features/`.
+For Coding Conventions + Patterns reference, see `CONVENTIONS.md`.
 
 ## Coding Conventions
 
 See `CONVENTIONS.md` for full details. Highlights:
 
-- File naming: **kebab-case** for ALL files including components (`user-list-page.tsx`, `dict-select.tsx`, `app-shell.tsx`, `auth-guard.tsx`). NO PascalCase file names anywhere.
+- File naming: **kebab-case** for ALL files including components (`user-list-page.tsx`, `dict-select.tsx`, `app-shell.tsx`). NO PascalCase file names.
 - Folder naming: **kebab-case**.
-- Component export naming: **PascalCase** in code (`UserListPage`, `DictSelect`) — file kebab, export PascalCase.
+- Component export naming: **PascalCase** in code (`UserListPage`, `DictSelect`).
 - Hook file naming: `use-xyz.ts` exports `useXyz`.
-- Type suffix: **DTO** (matching BE), e.g., `UserListItemDTO`, `UserCreateReqDTO`.
-- Comments: **English only**. No Chinese comments anywhere. JSDoc on exported components, hooks, and non-trivial functions.
-- No hardcoded colors. Use `theme.useToken()` from antd or `style={{ color: token.colorX }}`. **Never** use Tailwind color classes (`bg-white`, `text-gray-900`, `bg-blue-500`) on theme-sensitive elements.
-- Tailwind v4 is used for layout primitives only: spacing (`p-4`, `gap-2`), sizing (`w-full`), flex/grid (`flex items-center`), positioning. NOT for colors. See CONVENTIONS §Styling.
-- No hardcoded text strings in JSX. Use `t('key.path')` from i18next.
+- Type suffix: **DTO** (matching BE), e.g., `UserRespDTO`, `UserSaveReqDTO`.
+- Comments: **English only**. No Chinese / Vietnamese comments. JSDoc on exported components, hooks, non-trivial functions.
+- No hardcoded colors. Use `theme.useToken()` or antd component props.
+- Tailwind v4 for layout primitives only: spacing, sizing, flex/grid, positioning. NOT for colors.
+- No hardcoded text strings. Use `t('namespace.key.path')` from i18next.
+- i18n keys: per-domain namespace (`systemUser.form.username`, `common.cancel`). Top-level matches `<module><Entity>` camelCase.
 
 ## Don't
 
-- ❌ Don't use Vite `server.proxy` or any dev-only workaround that masks BE configuration gaps. If BE has CORS issues, fix BE CORS config. Dev environment behavior MUST match production.
-- ❌ Don't fall back to env vars (e.g., `VITE_DEFAULT_TENANT_ID`) when a BE endpoint should provide the value. Add the BE endpoint instead.
-- ❌ Don't wrap callbacks in `useCallback` or values in `useMemo` by default. React Compiler handles this. Only add manual memoization when profiling shows a measured need.
-- ❌ Don't mutate state, props, or destructured values during render — silently disables React Compiler optimization on that component.
-- ❌ Don't hardcode role checks (`if user.role === 'ADMIN'`). Use `<HasPermission>`.
+- ❌ Don't use Vite `server.proxy` or any dev-only workaround that masks BE config gaps. Fix BE CORS instead.
+- ❌ Don't fall back to env vars when a BE endpoint should provide the value.
+- ❌ Don't wrap callbacks in `useCallback` or values in `useMemo` by default. React Compiler handles this.
+- ❌ Don't mutate state, props, or destructured values during render.
+- ❌ Don't hardcode role checks. Use `<HasPermission>`.
 - ❌ Don't use `useEffect` for data fetching. Use TanStack Query.
 - ❌ Don't put API URLs as strings in components. Centralize in `features/{module}/{entity}/api/`.
-- ❌ Don't use `any` type. Define proper interfaces (suffix `DTO` for BE-mirrored types).
-- ❌ Don't hardcode colors or text strings.
-- ❌ Don't use Tailwind for colors (`bg-blue-500`, `text-gray-900`). Use antd tokens.
-- ❌ Don't put `className` on antd components for visual styling. Use antd props (`type`, `danger`, `size`) or theme overrides.
-- ❌ Don't use `<Outlet>` inside the main shell for menu content.
-- ❌ Don't install `react-hook-form` or `zod` to `package.json` baseline (per-feature add only).
-- ❌ Don't create components > 200 lines. Split.
-- ❌ Don't import from other feature modules. Move shared code to `shared/`.
-- ❌ Don't use `localStorage` for tabs state — use `sessionStorage` (via redux-persist).
-- ❌ Don't sync table state to URL by default (acc-fe pattern intentionally not adopted; see Plan §11.7).
-- ❌ Don't ship `<Activity>` before Phase 5C.
+- ❌ Don't use `any` type. Define proper interfaces (suffix `DTO`).
+- ❌ Don't use Tailwind for colors. Use antd tokens.
+- ❌ Don't put `className` on antd components for visual styling.
+- ❌ Don't use `<Outlet>` inside main shell for menu content.
+- ❌ Don't install RHF or zod baseline (per-feature add only).
+- ❌ Don't create components > 400 lines without splitting.
+- ❌ Don't import from other feature modules (exception: `features/permission`).
+- ❌ Don't use `localStorage` for tabs state — sessionStorage via redux-persist.
+- ❌ Don't sync table state to URL by default.
 - ❌ Don't use PascalCase for file or folder names.
-- ❌ Don't write Chinese comments. English only, regardless of yudao source.
+- ❌ Don't write Chinese / Vietnamese comments. English only.
+- ❌ Don't use static `message` / `Modal` from `'antd'` for actual usage. Use `App.useApp()` or `antdApp` proxy.
+- ❌ Don't use `Form.Item normalize` for dict-typed fields. Use boundary conversion (DictSelect tax).
+- ❌ Don't put callbacks in mutation hooks. Caller chains `await mutateAsync()` + UI action.
+- ❌ Don't let `skills/crud-page/_example/` drift silently. When `features/system/user/` refactors meaningfully, update example or re-anchor to a stable reference page.
 
 ## Communication & Decisions
 
-When porting from `yudao-ui-admin-vue3` (Vue) to Soar (React) — or adapting any reference codebase (`acc-logistic-rmk-fe`, yudao-cloud, etc.) — agents follow these rules to keep decisions traceable and avoid silent drift.
+When porting from `yudao-ui-admin-vue3` (Vue) to Soar (React) — or adapting any reference codebase (`acc-logistic-rmk-fe`, yudao-cloud, etc.) — agents follow these rules.
 
 ### Reference-following
 
-- **Default: port 1:1.** Match yudao's pattern unless there is a concrete reason to deviate (Vue→React semantics gap, decision already chosen in `FE_Admin_Architecture_Plan.md`, or maintenance status of a dep).
-- **Deviations must be explicit.** When deviating from yudao for any reason, the agent states the source pattern (file path + snippet or summary), the proposed Soar adaptation, and the reason. Inline `// pattern from yudao service.ts:42 — adapted because <reason>` keeps the trace readable in code review.
-- **Don't silently substitute libraries.** If yudao uses `web-storage-cache` and the agent proposes `localStorage` thuần, that is a deviation — raise it, don't ship it.
+- **Default: port 1:1.** Match yudao's pattern unless there is a concrete reason to deviate (Vue→React semantics gap, decision already chosen in `docs/plans/fe-admin-architecture-plan.md`, ADR, or maintenance status of a dep).
+- **Deviations must be explicit.** State source pattern + proposed Soar adaptation + reason. Inline `// pattern from yudao service.ts:42 — adapted because <reason>` keeps trace readable.
+- **Don't silently substitute libraries.** Raise the question.
 
 ### Asking vs deciding
 
-- **When unsure whether the user wants 1:1 port or adaptation, ASK.** Format: state the yudao pattern, list 2–3 alternatives (port 1:1 / adapt / skip), give a short recommendation with reasoning, and end with a question. Do not pick on the user's behalf.
-- **Edge cases that look minor are still questions.** Storage key naming, TTL semantics, error message wording, default sort order — small decisions accumulate. When the user has expressed a preference for matching a reference, default to asking.
-- **Don't invent context.** If a fact about the codebase is needed (e.g., "does file X exist", "is this field nullable"), read the source or ask. Do not fabricate from memory.
+- **When unsure whether the user wants 1:1 port or adaptation, ASK.** Format: state yudao pattern, list 2-3 alternatives (port / adapt / skip), short recommendation, end with question.
+- **Edge cases that look minor are still questions.**
+- **Don't invent context.** Read source or ask. No fabricating from memory.
 
 ### Examples vs decisions
 
-- **Mark illustrative examples as `EXAMPLE` or `ILLUSTRATION`** in any document, comment, or chat response that mixes proposed code with format demonstrations. Phrasing like "for instance, the file would look like X" must not be mistaken for a chosen approach.
-- **Never use real file paths in EXAMPLE blocks** unless that file path is also the final decision. Use `placeholder-name.ts` or wrap with a comment marking the block as illustrative.
+- **Mark illustrative examples as `EXAMPLE` or `ILLUSTRATION`** when mixing proposed code with format demonstrations.
+- **Never use real file paths in EXAMPLE blocks** unless the path is also the final decision.
 
 ### No workarounds for missing dependencies
 
-- **If BE is missing an API, request it.** Do not work around with a client-side stub, env var default, or hardcoded value that hides the gap. (Specific case: Vite `server.proxy` for BE CORS — already in §Don't.)
-- **If a yudao pattern depends on a library Soar doesn't have, request the library decision.** Either add the library (with maintenance check per `soar-be` library rule — verify last release, maintainer activity, framework compatibility) or write an equivalent helper. Do not skip the pattern silently.
-- **If a decision is missing from `FE_Admin_Architecture_Plan.md`, ask the user.** Do not infer from yudao behavior alone — yudao has dead code branches (e.g., `*:*:*` wildcard check in `hasPermi.ts` that never triggers with yudao BE) and outdated patterns.
+- **If BE is missing an API, request it.** No client-side stub.
+- **If a yudao pattern depends on a library Soar doesn't have, request the library decision.** Verify maintenance status (last release, maintainer activity, framework compatibility) per Soar library vetting rule before adopting from yudao — yudao uses China-ecosystem libraries that may be abandoned.
+- **If a decision is missing from the architecture plan, ask the user.**
+
+### ADR discipline
+
+When a significant architectural decision occurs (new pattern, library swap, convention change with cross-cutting impact):
+
+- The agent **drafts** the ADR using Nygard format in `docs/decisions/adr/<NNNN>-<kebab-title>.md`.
+- Sections: Context / Decision / Alternatives considered / Consequences (Positive, Negative, Risks, Follow-ups) / References.
+- Numbering append-only. To deprecate, write a new ADR with `Status: Supersedes <NNNN>` and update the old one to `Status: Superseded by <NEW>`.
+- Long reviews + applies. Agent does not commit ADRs directly.
+
+For task-level deliberations (a discrete block of work shipping multiple files), produce a deliverable doc in `docs/decisions/tasks/<phase>/<block-id>-<title>.md`. ADRs are for cross-cutting architecture; task deliverables are for "how we built this specific thing".
+
+### Working style
+
+- **Analyze first, clarify open points, get decisions, then produce output as markdown files.** Don't write code until explicitly asked.
+- **Ship per-block, wait for confirmation between blocks.**
+- **Don't generate find-replace patches** when a full new file is faster for both agent and human. Produce complete files for paste-replace.
 
 ## Verification Checklist
 
@@ -372,30 +367,49 @@ When porting from `yudao-ui-admin-vue3` (Vue) to Soar (React) — or adapting an
 - [ ] `pnpm build` succeeds
 - [ ] No `any` types
 - [ ] Action buttons wrapped in `<HasPermission>`
-- [ ] API calls use the `request` instance from `shared/api/http-client.ts`
+- [ ] API calls use `request` from `shared/api/http-client.ts`
 - [ ] Server data fetched via TanStack Query (not useEffect)
-- [ ] Forms use antd Form, not RHF (unless explicitly added for a complex case)
+- [ ] Forms use antd Form (not RHF)
 - [ ] No hardcoded text — uses `t()` from i18next
-- [ ] No hardcoded colors — uses theme tokens (not Tailwind color classes)
-- [ ] Tailwind used only for layout (spacing, flex, grid, sizing) — no color/typography on theme-sensitive elements
-- [ ] Date/time formatted via `formatDateTime()` from `shared/lib/format`
+- [ ] No hardcoded colors — uses antd tokens
+- [ ] Tailwind used only for layout (no color/typography on theme-sensitive elements)
+- [ ] Date/time via `formatDateTime()` from `shared/lib/format`
 - [ ] Icons via `@iconify/react`
-- [ ] No manual `useMemo` / `useCallback` unless profiler-justified (trust React Compiler)
-- [ ] No mutation of state/props/destructured values during render
-- [ ] Page wrapper in `src/pages/` matches `system_menu.component` for dispatcher resolution
-- [ ] All file names kebab-case (including components, hooks, layouts, routes)
-- [ ] No Chinese comments
-- [ ] Deviations from yudao explicitly noted in code or PR description
+- [ ] No manual `useMemo` / `useCallback` unless profiler-justified
+- [ ] No mutation of state/props during render
+- [ ] `App.useApp()` for `message` / `modal` / `notification` (no static `'antd'` imports for usage)
+- [ ] DictSelect tax applied at form boundary (no `Form.Item normalize` on dict-typed fields)
+- [ ] Mutations don't accept callbacks — caller chains `await mutateAsync()`
+- [ ] `dependencies={[...]}` on Form.Item validators that reference other fields
+- [ ] Page wrapper in `src/pages/` matches `system_menu.component`
+- [ ] All file names kebab-case
+- [ ] No Chinese / Vietnamese comments
+- [ ] For new CRUD pages: followed `skills/crud-page/` workflow
+- [ ] Deviations from yudao explicitly noted
 
 ## Deep Context
 
-- Master architecture: `soar-be/docs/FE_Admin_Architecture_Plan.md`
-- Phase 5A FE plan: `soar-fe/docs/PHASE_5A_FE_PLAN.md`
-- Phase 5A summary (current baseline): `soar-fe/docs/PHASE_5A_SUMMARY.md`
-- Phase 5A smoke test: `soar-fe/docs/PHASE_5A_SMOKE_TEST.md`
-- Backend phase plan: `soar-be/docs/PHASE_PLAN.md`
-- Backend decisions: `soar-be/docs/ARCHITECTURE_DECISIONS.md`
-- Conventions detail: `CONVENTIONS.md`
-- Task templates: `skills/` directory
+### Plans + Phase summaries
 
-> **Note**: `FE_Phase_5A_Scaffold_Spec.md` (from session S12) is **superseded** by `PHASE_5A_FE_PLAN.md` v2, `PHASE_5A_SUMMARY.md`, and this file. The scaffold spec contains outdated patterns (`VITE_DEFAULT_TENANT_ID` env var, circular import between http-client and error-interceptor, static `tab-registry.ts` instead of `import.meta.glob`). Read for intent only; follow this AGENTS.md + PHASE_5A_SUMMARY.md for actual decisions.
+- Master architecture: `docs/plans/fe-admin-architecture-plan.md`
+- Phase 5A baseline: `docs/phases/phase-5a-summary.md`
+- Phase 5A smoke test: `docs/phases/phase-5a-smoke-test.md`
+- Backend phase plan: `../soar-be/docs/phase-plan.md`
+
+### Decisions
+
+- ADR index: `docs/decisions/README.md` → individual ADRs at `docs/decisions/adr/<NNNN>-*.md`
+- Task deliverables (Phase 5B in progress): `docs/decisions/tasks/5b/<task-id>-*.md`
+- Backend decisions: `../soar-be/docs/architecture-decisions.md`
+
+### Skills (agent guidance)
+
+- CRUD page skill: `skills/crud-page/` (README + be-extraction + decisions + steps + \_example/)
+
+### Code conventions
+
+- `CONVENTIONS.md` — detailed coding standards (this file's source of truth for naming, file org, patterns)
+
+### Tech debt
+
+- `TECH_DEBT.md` — current debt items + resolved log

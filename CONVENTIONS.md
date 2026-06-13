@@ -397,7 +397,7 @@ Errors surface globally via axios interceptor — no per-call `onError` needed b
 ## Table + Pagination Pattern
 
 ```tsx
-import { ReloadOutlined, SearchOutlined } from '@ant-design/icons'
+import { Icon } from '@iconify/react'
 import { App, Button, Card, Space, Table, Tooltip, type TableColumnsType } from 'antd'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -503,11 +503,11 @@ export function UserListPage() {
         </Space>
         <Space>
           <Tooltip title={searchVisible ? t('common.hideSearch') : t('common.showSearch')}>
-            <Button icon={<SearchOutlined />} onClick={() => setSearchVisible(v => !v)} />
+            <Button icon={<Icon icon="mdi:filter" />} onClick={() => setSearchVisible(v => !v)} />
           </Tooltip>
           <Tooltip title={t('common.refresh')}>
             <Button
-              icon={<ReloadOutlined />}
+              icon={<Icon icon="mdi:reload" />}
               loading={tableProps.loading}
               onClick={() => refetch()}
             />
