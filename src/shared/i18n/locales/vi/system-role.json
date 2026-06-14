@@ -1,0 +1,62 @@
+{
+  "systemRole": {
+    "page": {
+      "title": "Quản lý vai trò"
+    },
+    "table": {
+      "name": "Tên vai trò",
+      "code": "Mã vai trò",
+      "sort": "Thứ tự",
+      "status": "Trạng thái",
+      "type": "Loại",
+      "createTime": "Ngày tạo",
+      "actions": "Thao tác"
+    },
+    "search": {
+      "name": "Tên vai trò",
+      "code": "Mã vai trò",
+      "status": "Trạng thái",
+      "createTime": "Khoảng thời gian"
+    },
+    "actions": {
+      "create": "Tạo mới",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "deleteSelected": "Xóa {{count}} mục đã chọn"
+    },
+    "confirm": {
+      "deleteOne": "Xóa vai trò \"{{name}}\"?",
+      "deleteMany": "Xóa {{count}} vai trò?"
+    },
+    "messages": {
+      "createSuccess": "Đã tạo vai trò",
+      "updateSuccess": "Đã cập nhật vai trò",
+      "deleteSuccess": "Đã xóa vai trò",
+      "deleteBulkSuccess": "Đã xóa {{count}} vai trò"
+    },
+    "form": {
+      "name": "Tên vai trò",
+      "code": "Mã vai trò",
+      "sort": "Thứ tự",
+      "status": "Trạng thái",
+      "remark": "Ghi chú",
+      "namePlaceholder": "Tối đa 30 ký tự",
+      "codePlaceholder": "Tối đa 100 ký tự",
+      "sortPlaceholder": "Thứ tự hiển thị",
+      "nameRequired": "Vui lòng nhập tên vai trò",
+      "nameLength": "Tên vai trò tối đa 30 ký tự",
+      "codeRequired": "Vui lòng nhập mã vai trò",
+      "codeLength": "Mã vai trò tối đa 100 ký tự",
+      "sortRequired": "Vui lòng nhập thứ tự",
+      "statusRequired": "Vui lòng chọn trạng thái",
+      "remarkLength": "Ghi chú tối đa 500 ký tự"
+    },
+    "modal": {
+      "createTitle": "Tạo vai trò",
+      "editTitle": "Chỉnh sửa vai trò",
+      "discardChanges": "Hủy các thay đổi chưa lưu?",
+      "discardConfirm": "Hủy bỏ",
+      "loading": "Đang tải..."
+    }
+  }
+}

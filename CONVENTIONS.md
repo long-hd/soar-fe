@@ -580,18 +580,27 @@ export function UserFormModal({ open, id, onClose }: UserFormModalProps) {
   const { create, update } = useUserMutations()
   const detailQuery = useUserDetailQuery(id, { enabled: open && isEdit })
 
+  // Reset form on each open. Clears stale state from previous open cycle.
+  // For Edit mode, the detail useEffect below repopulates from query data.
+  useEffect(() => {
+    if (open) form.resetFields()
+  }, [open, form])
+
   // Populate form on edit. NOTE: convert number → string for dict-typed fields
   useEffect(() => {
-    if (!detailQuery.data) return
-    const d = detailQuery.data
+    if (!open || !detailQuery.data) return
+    const u = detailQuery.data
     form.setFieldsValue({
-      username: d.username,
-      nickname: d.nickname,
-      sex: d.sex == null ? undefined : String(d.sex), // dict-typed: string for Select
-      deptId: d.deptId,
-      remark: d.remark,
+      username: u.username,
+      nickname: u.nickname,
+      deptId: u.deptId,
+      postIds: u.postIds,
+      email: u.email,
+      mobile: u.mobile,
+      sex: u.sex == null ? undefined : String(u.sex), // dict-typed: string for Select
+      remark: u.remark,
     })
-  }, [detailQuery.data, form])
+  }, [open, detailQuery.data, form])
 
   const handleSubmit = async () => {
     const values = await form.validateFields()
@@ -706,6 +715,7 @@ export function UserFormModal({ open, id, onClose }: UserFormModalProps) {
 - `destroyOnHidden` resets internal state per open cycle.
 - `maskClosable={false}` — prevent accidental data loss from misclick on overlay.
 - BE field-level errors map via `form.setFields([{ name: 'username', errors: ['...'] }])`.
+- **Form instance lifecycle**: `Form.useForm()` returns an instance bound to the parent component, not to the modal DOM. `destroyOnHidden` destroys Form JSX children on close but the instance keeps its values across open cycles. Add `useEffect(() => { if (open) form.resetFields() }, [open, form])` at the top of every form-modal component. For modals with a detail query, include `open` in the detail useEffect deps so reopening the same edit target (cached data, unchanged reference) still refires after the reset.
 
 ## Permission Usage Pattern
 

@@ -6,6 +6,7 @@ import enError from '../locales/en/error.json'
 import enTabRenderer from '../locales/en/tab-renderer.json'
 import enTagsView from '../locales/en/tags-view.json'
 import enSystemUser from '../locales/en/system-user.json'
+import enSystemRole from '../locales/en/system-role.json'
 
 export default {
   ...enCommon,
@@ -15,4 +16,5 @@ export default {
   ...enTabRenderer,
   ...enTagsView,
   ...enSystemUser,
+  ...enSystemRole,
 }

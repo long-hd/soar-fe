@@ -1,4 +1,5 @@
 import { App, Form, Input, Modal } from 'antd'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { UserRespDTO } from '../types'
@@ -18,6 +19,13 @@ import { useUserMutations } from '@/features/system/user/hooks'
  * (If audit log or "last password reset" column added later, revisit.)
  *
  * Layout: vertical (matches T2.3 layout refactor for label visibility).
+ *
+ * Form state lifecycle:
+ *   - `Form.useForm()` instance persists in this component across opens.
+ *   - `destroyOnHidden` destroys Form DOM but not the instance state.
+ *   - Without reset on open, fields retain prior values (e.g., admin types
+ *     password for user A then cancels → reopens for user B → fields still
+ *     hold A's typed value). Fix: resetFields() on every open.
  */
 
 interface UserResetPasswordModalProps {
@@ -38,6 +46,11 @@ export function UserResetPasswordModal({ open, user, onClose }: UserResetPasswor
   const [form] = Form.useForm<FormValues>()
 
   const { updatePassword } = useUserMutations()
+
+  // Reset on each open — no prior values should leak across resets for different users.
+  useEffect(() => {
+    if (open) form.resetFields()
+  }, [open, form])
 
   const handleSubmit = async () => {
     const values = await form.validateFields()

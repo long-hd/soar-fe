@@ -1,0 +1,62 @@
+{
+  "systemRole": {
+    "page": {
+      "title": "Role Management"
+    },
+    "table": {
+      "name": "Role Name",
+      "code": "Role Code",
+      "sort": "Sort",
+      "status": "Status",
+      "type": "Type",
+      "createTime": "Created At",
+      "actions": "Actions"
+    },
+    "search": {
+      "name": "Role Name",
+      "code": "Role Code",
+      "status": "Status",
+      "createTime": "Created Range"
+    },
+    "actions": {
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteSelected": "Delete {{count}} selected"
+    },
+    "confirm": {
+      "deleteOne": "Delete role \"{{name}}\"?",
+      "deleteMany": "Delete {{count}} roles?"
+    },
+    "messages": {
+      "createSuccess": "Role created",
+      "updateSuccess": "Role updated",
+      "deleteSuccess": "Role deleted",
+      "deleteBulkSuccess": "{{count}} roles deleted"
+    },
+    "form": {
+      "name": "Role Name",
+      "code": "Role Code",
+      "sort": "Sort",
+      "status": "Status",
+      "remark": "Remark",
+      "namePlaceholder": "Up to 30 characters",
+      "codePlaceholder": "Up to 100 characters",
+      "sortPlaceholder": "Display order",
+      "nameRequired": "Role name is required",
+      "nameLength": "Role name must be at most 30 characters",
+      "codeRequired": "Role code is required",
+      "codeLength": "Role code must be at most 100 characters",
+      "sortRequired": "Sort is required",
+      "statusRequired": "Status is required",
+      "remarkLength": "Remark must be at most 500 characters"
+    },
+    "modal": {
+      "createTitle": "Create Role",
+      "editTitle": "Edit Role",
+      "discardChanges": "Discard unsaved changes?",
+      "discardConfirm": "Discard",
+      "loading": "Loading..."
+    }
+  }
+}

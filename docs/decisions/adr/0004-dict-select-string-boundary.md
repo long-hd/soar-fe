@@ -57,13 +57,15 @@ const handleFinish = (values: SearchFormValues) => {
   onSearch(filters)
 }
 
-// On load (number → string for setFieldsValue)
+// On load (number → string for setFieldsValue). `open` in deps so reopening
+// the same edit target (cached data, unchanged reference) refires after the
+// reset useEffect — see CONVENTIONS § Form + Modal "Form instance lifecycle".
 useEffect(() => {
-  if (!detailQuery.data) return
+  if (!open || !detailQuery.data) return
   form.setFieldsValue({
     status: detailQuery.data.status == null ? undefined : String(detailQuery.data.status),
   })
-}, [detailQuery.data, form])
+}, [open, detailQuery.data, form])
 ```
 
 **No `Form.Item normalize`** for dict-typed fields. Conversion is explicit at the 2 boundary points only.

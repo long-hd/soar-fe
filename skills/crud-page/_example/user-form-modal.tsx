@@ -26,8 +26,14 @@ import { useUserDetailQuery, useUserMutations } from '@/features/system/user/hoo
  * Close:
  *   - X / ESC / click-outside / Cancel button → check `form.isFieldsTouched()`.
  *     If touched → confirm "Discard changes?". If clean → close silently.
- *   - `destroyOnClose` resets all internal state (form, useQuery cache for detail)
- *     each cycle — avoids stale data leaking between opens.
+ *
+ * Form state lifecycle:
+ *   - `Form.useForm()` instance lives in THIS component (not in modal DOM).
+ *   - `destroyOnHidden` destroys Form JSX children on close but the form instance
+ *     state persists across open cycles. Without explicit reset, opening Create
+ *     after a prior Edit shows stale values.
+ *   - Reset useEffect below clears on every open; detail useEffect repopulates
+ *     for edit mode (depends on `open` so reopening same role refires).
  *
  * Form value shape diverges from `UserSaveReqDTO` for dict-typed fields:
  *   - `sex` held as string (DictSelect emit) → converted to number at submit.
@@ -63,9 +69,17 @@ export function UserFormModal({ open, userId, onClose }: UserFormModalProps) {
   const { create, update } = useUserMutations()
   const detailQuery = useUserDetailQuery(userId, { enabled: open && isEdit })
 
-  // Populate form when detail arrives.
+  // Reset form on each open. Clears stale state from previous open cycle.
+  // For Edit mode, the detail useEffect below repopulates from query data.
   useEffect(() => {
-    if (!detailQuery.data) return
+    if (open) form.resetFields()
+  }, [open, form])
+
+  // Populate form when modal opens in edit mode + detail arrives.
+  // `open` is in deps so reopening the same userId (cached data, same reference)
+  // still refires this effect → repopulates after the reset above.
+  useEffect(() => {
+    if (!open || !detailQuery.data) return
     const u = detailQuery.data
     form.setFieldsValue({
       username: u.username,
@@ -78,7 +92,7 @@ export function UserFormModal({ open, userId, onClose }: UserFormModalProps) {
       sex: u.sex == null ? undefined : String(u.sex),
       remark: u.remark,
     })
-  }, [detailQuery.data, form])
+  }, [open, detailQuery.data, form])
 
   // ===== Mutations =====
 

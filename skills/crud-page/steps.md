@@ -642,16 +642,23 @@ export function <ENTITY>FormModal({ open, id, onClose }: <ENTITY>FormModalProps)
   const { create, update } = use<ENTITY>Mutations()
   const detailQuery = use<ENTITY>DetailQuery(id, { enabled: open && isEdit })
 
+  // Reset form on each open. Clears stale state across open cycles —
+  // Form.useForm instance lives in this component, destroyOnHidden only
+  // destroys the modal DOM, not the form instance state.
+  useEffect(() => {
+    if (open) form.resetFields()
+  }, [open, form])
+
   // Populate form on edit
   useEffect(() => {
-    if (!detailQuery.data) return
+    if (!open || !detailQuery.data) return
     const d = detailQuery.data
     form.setFieldsValue({
       <field>: d.<field>,
       // For dict-typed fields, convert number → string (DictSelect tax):
       <dictField>: d.<dictField> == null ? undefined : String(d.<dictField>),
     })
-  }, [detailQuery.data, form])
+  }, [open, detailQuery.data, form])
 
   const handleSubmit = async () => {
     const values = await form.validateFields()
