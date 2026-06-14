@@ -36,4 +36,8 @@ export const roleApi = {
       .delete<CommonResult<boolean>>(`${BASE}/delete-list`, { params: { ids } })
       .then(r => r.data.data)
   },
+
+  simpleList(): Promise<RoleRespDTO[]> {
+    return request.get<CommonResult<RoleRespDTO[]>>(`${BASE}/simple-list`).then(r => r.data.data)
+  },
 }

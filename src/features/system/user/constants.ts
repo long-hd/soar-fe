@@ -22,6 +22,7 @@ export const USER_PERMISSIONS = {
   update: 'system:user:update',
   delete: 'system:user:delete',
   updatePassword: 'system:user:update-password',
+  assignRoles: 'system:permission:assign-user-role',
 } as const
 
 // ===== Dict types =====

@@ -22,6 +22,7 @@ import type {
  */
 
 const BASE = '/admin-api/system/user'
+const PERMISSION_BASE = '/admin-api/system/permission'
 
 export const userApi = {
   page(params: UserPageReqParams): Promise<PageResult<UserRespDTO>> {
@@ -65,5 +66,19 @@ export const userApi = {
 
   updateStatus(data: UserUpdateStatusReqDTO): Promise<boolean> {
     return request.put<CommonResult<boolean>>(`${BASE}/update-status`, data).then(r => r.data.data)
+  },
+
+  getUserRoleIds(userId: number): Promise<number[]> {
+    return request
+      .get<CommonResult<number[]>>(`${PERMISSION_BASE}/list-user-roles`, {
+        params: { userId },
+      })
+      .then(r => r.data.data)
+  },
+
+  assignRoles(data: { userId: number; roleIds: number[] }): Promise<boolean> {
+    return request
+      .put<CommonResult<boolean>>(`${PERMISSION_BASE}/assign-user-role`, data)
+      .then(r => r.data.data)
   },
 }

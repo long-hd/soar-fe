@@ -10,6 +10,15 @@ export const ROLE_QUERY_KEY = ['system', 'role'] as const
 export const sysRoleQueryKey = {
   all: ROLE_QUERY_KEY,
   detail: (id: number) => [...sysRoleQueryKey.all, 'detail', id] as const,
+  simpleList: [...ROLE_QUERY_KEY, 'simple-list'] as const,
+}
+
+export function useRoleSimpleList(options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: sysRoleQueryKey.simpleList,
+    queryFn: () => roleApi.simpleList(),
+    enabled: options?.enabled ?? true,
+  })
 }
 
 export function useRoleDetailQuery(id: number | undefined, options?: { enabled?: boolean }) {

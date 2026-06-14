@@ -24,6 +24,7 @@
       "edit": "Edit",
       "delete": "Delete",
       "resetPassword": "Reset Password",
+      "assignRoles": "Assign Roles",
       "deleteSelected": "Delete {{count}} selected"
     },
     "confirm": {
@@ -75,6 +76,16 @@
       "newPasswordLength": "Password must be 4-20 characters",
       "confirmPasswordRequired": "Please confirm the password",
       "confirmPasswordMismatch": "Passwords do not match"
+    },
+    "assignRoles": {
+      "title": "Assign roles for {{username}}",
+      "description": "Move roles between lists to assign or remove.",
+      "available": "Available roles",
+      "assigned": "Assigned roles",
+      "search": "Search roles",
+      "saveSuccess": "Roles assigned",
+      "noRoles": "No roles available",
+      "loading": "Loading..."
     }
   }
 }

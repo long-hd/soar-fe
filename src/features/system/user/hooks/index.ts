@@ -13,6 +13,7 @@ export const USER_QUERY_KEY = ['system', 'user'] as const
 export const sysUserQueryKey = {
   all: USER_QUERY_KEY,
   detail: (id: number) => [...sysUserQueryKey.all, 'detail', id] as const,
+  roles: (userId: number) => [...sysUserQueryKey.all, 'roles', userId] as const,
 }
 
 // ===== Queries =====
@@ -22,6 +23,15 @@ export function useUserDetailQuery(id: number | undefined, options?: { enabled?:
     queryKey: sysUserQueryKey.detail(id!),
     queryFn: () => userApi.get(id!),
     enabled: id != null && (options?.enabled ?? true),
+  })
+}
+
+export function useUserRolesQuery(userId: number | undefined, options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: sysUserQueryKey.roles(userId!),
+    queryFn: () => userApi.getUserRoleIds(userId!),
+    enabled: userId != null && (options?.enabled ?? true),
+    staleTime: 0,
   })
 }
 
@@ -82,5 +92,14 @@ export function useUserMutations() {
     },
   })
 
-  return { create, update, remove, removeMany, updateStatus, updatePassword }
+  const assignRoles = useMutation({
+    mutationFn: (vars: { userId: number; roleIds: number[] }) => userApi.assignRoles(vars),
+    onSuccess: (_, vars) => {
+      message.success(t('systemUser.assignRoles.saveSuccess'))
+      void invalidateList()
+      void queryClient.invalidateQueries({ queryKey: sysUserQueryKey.roles(vars.userId) })
+    },
+  })
+
+  return { create, update, remove, removeMany, updateStatus, updatePassword, assignRoles }
 }

@@ -17,6 +17,7 @@ import type { UserFilters, UserRespDTO } from '../types'
 import { UserSearchForm } from '@/features/system/user/components/user-search-form'
 import { UserFormModal } from '@/features/system/user/components/user-form-modal'
 import { UserResetPasswordModal } from '@/features/system/user/components/user-reset-password-modal'
+import { UserAssignRolesModal } from '@/features/system/user/components/user-assign-roles-modal'
 import { sysUserQueryKey, useUserMutations } from '@/features/system/user/hooks'
 import { Icon } from '@iconify/react'
 
@@ -27,11 +28,11 @@ import { Icon } from '@iconify/react'
  *  - useTableState — in-memory filters/page/sort. Activity keep-alive preserves
  *    across tab switches. F5 resets (no URL sync per Q1=B).
  *  - usePagedQuery — fetches `/page` + builds antd tableProps.
- *  - 3 useMutation: remove, removeMany, updateStatus. Invalidate USER_QUERY_KEY
- *    on success → list refetches.
+ *  - Mutations destructured for direct page use: remove, removeMany, updateStatus.
+ *    Other mutations (create, update, updatePassword, assignRoles) live inside
+ *    their respective modal components.
  *
- * Modals (Create/Edit form, Reset Password) are stubbed in T2.2 with `message.info`
- * toasts. T2.3 wires the form modal; T2.4 wires the reset-password modal.
+ * Modals: Create/Edit form (T2.3), Reset Password (T2.4), Assign Roles (TR).
  *
  * Self-protection (T2.0-D8):
  *  - Cannot delete self (button disabled, checkbox disabled)
@@ -54,6 +55,10 @@ export function UserListPage() {
     open: false,
   })
   const [resetPwdModal, setResetPwdModal] = useState<{
+    open: boolean
+    user: UserRespDTO | null
+  }>({ open: false, user: null })
+  const [assignRolesModal, setAssignRolesModal] = useState<{
     open: boolean
     user: UserRespDTO | null
   }>({ open: false, user: null })
@@ -81,6 +86,10 @@ export function UserListPage() {
   }
   const handleResetPassword = (user: UserRespDTO) => {
     setResetPwdModal({ open: true, user })
+  }
+
+  const handleAssignRoles = (user: UserRespDTO) => {
+    setAssignRolesModal({ open: true, user })
   }
 
   const handleDeleteOne = (user: UserRespDTO) => {
@@ -162,7 +171,7 @@ export function UserListPage() {
     {
       title: t('systemUser.table.actions'),
       key: 'actions',
-      width: 240,
+      width: 320,
       render: (_, record) => (
         <Space size="small">
           <HasPermission code={USER_PERMISSIONS.update}>
@@ -184,6 +193,11 @@ export function UserListPage() {
           <HasPermission code={USER_PERMISSIONS.updatePassword}>
             <Button type="link" size="small" onClick={() => handleResetPassword(record)}>
               {t('systemUser.actions.resetPassword')}
+            </Button>
+          </HasPermission>
+          <HasPermission code={USER_PERMISSIONS.assignRoles}>
+            <Button type="link" size="small" onClick={() => handleAssignRoles(record)}>
+              {t('systemUser.actions.assignRoles')}
             </Button>
           </HasPermission>
         </Space>
@@ -273,6 +287,11 @@ export function UserListPage() {
         open={resetPwdModal.open}
         user={resetPwdModal.user}
         onClose={() => setResetPwdModal({ open: false, user: null })}
+      />
+      <UserAssignRolesModal
+        open={assignRolesModal.open}
+        user={assignRolesModal.user}
+        onClose={() => setAssignRolesModal({ open: false, user: null })}
       />
     </Card>
   )

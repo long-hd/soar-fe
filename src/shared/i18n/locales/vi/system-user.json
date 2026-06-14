@@ -24,6 +24,7 @@
       "edit": "Sửa",
       "delete": "Xóa",
       "resetPassword": "Đặt lại mật khẩu",
+      "assignRoles": "Gán vai trò",
       "deleteSelected": "Xóa {{count}} mục đã chọn"
     },
     "confirm": {
@@ -75,6 +76,16 @@
       "newPasswordLength": "Mật khẩu phải có 4-20 ký tự",
       "confirmPasswordRequired": "Vui lòng xác nhận mật khẩu",
       "confirmPasswordMismatch": "Mật khẩu không khớp"
+    },
+    "assignRoles": {
+      "title": "Gán vai trò cho {{username}}",
+      "description": "Di chuyển vai trò giữa các danh sách để gán hoặc gỡ.",
+      "available": "Vai trò khả dụng",
+      "assigned": "Vai trò đã gán",
+      "search": "Tìm vai trò",
+      "saveSuccess": "Đã gán vai trò",
+      "noRoles": "Không có vai trò khả dụng",
+      "loading": "Đang tải..."
     }
   }
 }
