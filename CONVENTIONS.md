@@ -293,6 +293,40 @@ Note: `request` is the axios instance from `@/shared/api/http-client`. The respo
 
 ## TanStack Query Pattern
 
+### Foundation cache invalidation on admin mutations
+
+When an admin CRUD page edits an entity that has a **foundation lookup** (a shared hook + cache key consumed by other features), mutations MUST invalidate BOTH the admin page query key AND the foundation lookup key.
+
+**Foundation lookups currently in codebase**:
+
+| Lookup key       | Foundation file                     | Consumed by                                  |
+| ---------------- | ----------------------------------- | -------------------------------------------- |
+| `POST_QUERY_KEY` | `src/shared/hooks/use-post-list.ts` | `<PostSelect>` in User form                  |
+| `DEPT_QUERY_KEY` | `src/shared/hooks/use-dept-tree.ts` | `<DeptTreeSelect>` in User form + Dept admin |
+| `MENU_QUERY_KEY` | `src/shared/hooks/use-menu-tree.ts` | `<MenuTreeSelect>` in Menu admin             |
+| `DICT_QUERY_KEY` | `src/shared/hooks/use-dict-data.ts` | `<DictSelect>` + `<DictTag>` everywhere      |
+
+**Pattern**: in `useEntityMutations()` hook:
+
+```typescript
+import { POST_QUERY_KEY } from '@/shared/hooks/use-post-list'
+
+export function usePostMutations() {
+  const queryClient = useQueryClient()
+
+  const invalidateAll = () => {
+    void queryClient.invalidateQueries({ queryKey: sysPostQueryKey.all }) // admin page key
+    void queryClient.invalidateQueries({ queryKey: POST_QUERY_KEY }) // foundation lookup
+  }
+
+  // ... mutations call invalidateAll() in onSuccess
+}
+```
+
+**Rationale**: foundation lookups have `staleTime: Infinity` for performance. Admin mutations are the ONLY trigger for refresh. Forgetting dual invalidation = stale `<PostSelect>` options in User form until full page reload.
+
+**Validated instances**: 2 (DICT_QUERY_KEY in TT, POST_QUERY_KEY in TP). Tree variants extend this — see `skills/crud-tree-page/decisions.md` Q11.
+
 Mature stage — query keys + parameterized queries + collected mutations live in `features/<module>/<entity>/hooks/index.ts`:
 
 ```typescript
@@ -538,6 +572,41 @@ Key points:
 - Hide-search animation + refresh button: toolbar utility pattern (T2.5)
 
 ## Form + Modal Pattern (antd Form, no RHF)
+
+### Immutable identifier fields on edit
+
+Entities with a "code-like" identifier field (referenced elsewhere by string value, not numeric id) MUST disable that field in edit mode to prevent breaking references.
+
+**Currently applied**:
+
+| Entity   | Field      | Referenced by                                                        |
+| -------- | ---------- | -------------------------------------------------------------------- |
+| Role     | `code`     | Backend permission checks via `@RoleCode`                            |
+| DictType | `type`     | DictData rows via `dictType` FK string                               |
+| DictData | `dictType` | URL params + form lookups                                            |
+| Post     | `code`     | User assignments via `user_post.post_code` (if applicable) + reports |
+| Menu     | `tabKey`   | FE tab routing — but editable since rename usually intentional       |
+| Menu     | `type`     | BE delete cascade + parent picker logic                              |
+
+**Pattern**: in form modal component:
+
+```tsx
+<Form.Item name="code" rules={[{ required: true }]}>
+  <Input disabled={isEdit} />
+</Form.Item>
+```
+
+For dropdown-typed identifiers:
+
+```tsx
+<MenuTypeSelect disabled={isEdit} />
+```
+
+**Rationale**: changing code/type post-create silently breaks references in BE permission system, user assignments, URL routing, etc. Force admin to delete + recreate for true type/code changes.
+
+**Note**: Menu `tabKey` is intentionally editable — admin may rename to fix typo or reorganize URL scheme. Other fields are immutable because their references are harder to track.
+
+**Validated instances**: 4 (Role.code, DictType.type, DictData.dictType, Post.code) — pattern fully stable, applies to any future entity with a string identifier field.
 
 Unified create + edit modal — single component, mode chosen by `id` prop:
 
