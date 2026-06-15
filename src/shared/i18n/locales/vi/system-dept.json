@@ -1,0 +1,66 @@
+{
+  "systemDept": {
+    "page": {
+      "title": "Quản lý phòng ban"
+    },
+    "table": {
+      "name": "Tên phòng ban",
+      "leader": "Trưởng phòng",
+      "sort": "Thứ tự",
+      "status": "Trạng thái",
+      "createTime": "Ngày tạo",
+      "actions": "Thao tác"
+    },
+    "search": {
+      "name": "Tên phòng ban",
+      "status": "Trạng thái"
+    },
+    "actions": {
+      "create": "Tạo mới",
+      "edit": "Sửa",
+      "addChild": "Thêm con",
+      "delete": "Xóa",
+      "deleteSelected": "Xóa {{count}} mục đã chọn",
+      "deleteHasChildren": "Không thể xóa phòng ban có phòng ban con"
+    },
+    "confirm": {
+      "deleteOne": "Xóa phòng ban \"{{name}}\"?",
+      "deleteMany": "Xóa {{count}} phòng ban?"
+    },
+    "messages": {
+      "createSuccess": "Đã tạo phòng ban",
+      "updateSuccess": "Đã cập nhật phòng ban",
+      "deleteSuccess": "Đã xóa phòng ban",
+      "deleteBulkSuccess": "Đã xóa {{count}} phòng ban"
+    },
+    "form": {
+      "name": "Tên phòng ban",
+      "parentId": "Phòng ban cha",
+      "leaderUserId": "Trưởng phòng",
+      "sort": "Thứ tự",
+      "phone": "Điện thoại",
+      "email": "Email",
+      "status": "Trạng thái",
+      "namePlaceholder": "Tối đa 30 ký tự",
+      "parentIdPlaceholder": "Chọn phòng ban cha (để trống = gốc)",
+      "leaderUserIdPlaceholder": "Chọn trưởng phòng",
+      "sortPlaceholder": "Thứ tự hiển thị",
+      "phonePlaceholder": "Tối đa 11 ký tự",
+      "emailPlaceholder": "Tối đa 50 ký tự",
+      "nameRequired": "Vui lòng nhập tên phòng ban",
+      "nameLength": "Tên phòng ban tối đa 30 ký tự",
+      "sortRequired": "Vui lòng nhập thứ tự",
+      "statusRequired": "Vui lòng chọn trạng thái",
+      "phoneLength": "Số điện thoại tối đa 11 ký tự",
+      "emailLength": "Email tối đa 50 ký tự",
+      "emailInvalid": "Định dạng email không hợp lệ"
+    },
+    "modal": {
+      "createTitle": "Tạo phòng ban",
+      "editTitle": "Chỉnh sửa phòng ban",
+      "discardChanges": "Hủy các thay đổi chưa lưu?",
+      "discardConfirm": "Hủy bỏ",
+      "loading": "Đang tải..."
+    }
+  }
+}

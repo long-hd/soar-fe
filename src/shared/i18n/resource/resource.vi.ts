@@ -7,6 +7,7 @@ import viTabRenderer from '../locales/vi/tab-renderer.json'
 import viTagsView from '../locales/vi/tags-view.json'
 import viSystemUser from '../locales/vi/system-user.json'
 import viSystemRole from '../locales/vi/system-role.json'
+import viSystemDept from '../locales/vi/system-dept.json'
 
 export default {
   ...viCommon,
@@ -17,4 +18,5 @@ export default {
   ...viTagsView,
   ...viSystemUser,
   ...viSystemRole,
+  ...viSystemDept,
 }

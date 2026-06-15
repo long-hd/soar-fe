@@ -7,6 +7,7 @@ import enTabRenderer from '../locales/en/tab-renderer.json'
 import enTagsView from '../locales/en/tags-view.json'
 import enSystemUser from '../locales/en/system-user.json'
 import enSystemRole from '../locales/en/system-role.json'
+import enSystemDept from '../locales/en/system-dept.json'
 
 export default {
   ...enCommon,
@@ -17,4 +18,5 @@ export default {
   ...enTagsView,
   ...enSystemUser,
   ...enSystemRole,
+  ...enSystemDept,
 }

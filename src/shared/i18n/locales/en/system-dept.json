@@ -1,0 +1,66 @@
+{
+  "systemDept": {
+    "page": {
+      "title": "Department Management"
+    },
+    "table": {
+      "name": "Department Name",
+      "leader": "Leader",
+      "sort": "Sort",
+      "status": "Status",
+      "createTime": "Created At",
+      "actions": "Actions"
+    },
+    "search": {
+      "name": "Department Name",
+      "status": "Status"
+    },
+    "actions": {
+      "create": "Create",
+      "edit": "Edit",
+      "addChild": "Add Child",
+      "delete": "Delete",
+      "deleteSelected": "Delete {{count}} selected",
+      "deleteHasChildren": "Cannot delete department with children"
+    },
+    "confirm": {
+      "deleteOne": "Delete department \"{{name}}\"?",
+      "deleteMany": "Delete {{count}} departments?"
+    },
+    "messages": {
+      "createSuccess": "Department created",
+      "updateSuccess": "Department updated",
+      "deleteSuccess": "Department deleted",
+      "deleteBulkSuccess": "{{count}} departments deleted"
+    },
+    "form": {
+      "name": "Department Name",
+      "parentId": "Parent Department",
+      "leaderUserId": "Leader",
+      "sort": "Sort",
+      "phone": "Phone",
+      "email": "Email",
+      "status": "Status",
+      "namePlaceholder": "Up to 30 characters",
+      "parentIdPlaceholder": "Select parent (empty = root)",
+      "leaderUserIdPlaceholder": "Select leader",
+      "sortPlaceholder": "Display order",
+      "phonePlaceholder": "Up to 11 characters",
+      "emailPlaceholder": "Up to 50 characters",
+      "nameRequired": "Department name is required",
+      "nameLength": "Department name must be at most 30 characters",
+      "sortRequired": "Sort is required",
+      "statusRequired": "Status is required",
+      "phoneLength": "Phone must be at most 11 characters",
+      "emailLength": "Email must be at most 50 characters",
+      "emailInvalid": "Invalid email format"
+    },
+    "modal": {
+      "createTitle": "Create Department",
+      "editTitle": "Edit Department",
+      "discardChanges": "Discard unsaved changes?",
+      "discardConfirm": "Discard",
+      "loading": "Loading..."
+    }
+  }
+}

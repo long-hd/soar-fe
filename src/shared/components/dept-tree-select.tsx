@@ -26,21 +26,33 @@ import type { TreeNode } from '@/shared/lib/tree'
  * "user can access these depts").
  */
 
-type DeptTreeSelectProps = Omit<TreeSelectProps, 'treeData' | 'loading'>
+type DeptTreeSelectProps = Omit<TreeSelectProps, 'treeData' | 'loading'> & {
+  /** Node ids that cannot be selected (e.g. self + descendants in dept edit form). */
+  disabledIds?: number[]
+  loading?: boolean
+}
 
 type DeptTreeSelectNode = NonNullable<TreeSelectProps['treeData']>[number]
 
-function toTreeData(items: TreeNode<DeptSimpleDTO>[]): DeptTreeSelectNode[] {
+function toTreeData(
+  items: TreeNode<DeptSimpleDTO>[],
+  disabledIds?: number[],
+): DeptTreeSelectNode[] {
   return items.map(item => ({
     title: item.name,
     value: item.id,
-    children: item.children?.length ? toTreeData(item.children) : undefined,
+    disabled: disabledIds?.includes(item.id),
+    children: item.children?.length ? toTreeData(item.children, disabledIds) : undefined,
   }))
 }
 
-export function DeptTreeSelect(props: DeptTreeSelectProps) {
+export function DeptTreeSelect({
+  disabledIds,
+  loading: loadingOverride,
+  ...props
+}: DeptTreeSelectProps) {
   const { data: tree, isLoading } = useDeptTree()
-  const treeData = useMemo(() => toTreeData(tree), [tree])
+  const treeData = useMemo(() => toTreeData(tree, disabledIds), [tree, disabledIds])
 
   return (
     <TreeSelect
@@ -50,7 +62,7 @@ export function DeptTreeSelect(props: DeptTreeSelectProps) {
       treeDefaultExpandAll
       {...props}
       treeData={treeData}
-      loading={isLoading}
+      loading={isLoading || !!loadingOverride}
     />
   )
 }

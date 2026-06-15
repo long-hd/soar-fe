@@ -74,3 +74,55 @@ export function buildTreeFromFlat<T>(
 
   return roots
 }
+
+/**
+ * Collect all ancestor ids for the given node ids by walking parentId chains.
+ * Stops at null, undefined, or 0 (root sentinel). Does not include the input ids.
+ */
+export function collectAncestorIds(
+  nodeIds: Iterable<number>,
+  getParentId: (id: number) => number | null | undefined,
+): number[] {
+  const result = new Set<number>()
+  for (const id of nodeIds) {
+    let parentId = getParentId(id)
+    while (parentId != null && parentId !== 0) {
+      if (result.has(parentId)) break
+      result.add(parentId)
+      parentId = getParentId(parentId)
+    }
+  }
+  return [...result]
+}
+
+/**
+ * DFS from `nodeId` in a built tree; returns all descendant ids (excluding `nodeId`).
+ */
+export function collectDescendantIds<T>(
+  tree: readonly TreeNode<T>[],
+  nodeId: number,
+  getId: (item: T) => number,
+): number[] {
+  const result: number[] = []
+
+  function collectAll(nodes: readonly TreeNode<T>[]) {
+    for (const node of nodes) {
+      result.push(getId(node))
+      if (node.children?.length) collectAll(node.children)
+    }
+  }
+
+  function findAndCollect(nodes: readonly TreeNode<T>[]): boolean {
+    for (const node of nodes) {
+      if (getId(node) === nodeId) {
+        if (node.children?.length) collectAll(node.children)
+        return true
+      }
+      if (node.children?.length && findAndCollect(node.children)) return true
+    }
+    return false
+  }
+
+  findAndCollect(tree)
+  return result
+}
