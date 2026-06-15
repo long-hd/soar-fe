@@ -8,6 +8,8 @@ import enTagsView from '../locales/en/tags-view.json'
 import enSystemUser from '../locales/en/system-user.json'
 import enSystemRole from '../locales/en/system-role.json'
 import enSystemDept from '../locales/en/system-dept.json'
+import enSystemDictType from '../locales/en/system-dict-type.json'
+import enSystemDictData from '../locales/en/system-dict-data.json'
 
 export default {
   ...enCommon,
@@ -19,4 +21,6 @@ export default {
   ...enSystemUser,
   ...enSystemRole,
   ...enSystemDept,
+  ...enSystemDictType,
+  ...enSystemDictData,
 }

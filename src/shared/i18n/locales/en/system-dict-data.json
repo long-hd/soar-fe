@@ -1,0 +1,76 @@
+{
+  "systemDictData": {
+    "page": {
+      "title": "Dictionary Data: {{name}}"
+    },
+    "tabTitle": "Dict Data: {{name}}",
+    "table": {
+      "sort": "Sort",
+      "label": "Label",
+      "value": "Value",
+      "status": "Status",
+      "colorType": "Color",
+      "createTime": "Created At",
+      "actions": "Actions"
+    },
+    "search": {
+      "label": "Label",
+      "status": "Status"
+    },
+    "actions": {
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteSelected": "Delete {{count}} selected"
+    },
+    "confirm": {
+      "deleteOne": "Delete dictionary entry \"{{name}}\"?",
+      "deleteMany": "Delete {{count}} dictionary entries?"
+    },
+    "messages": {
+      "createSuccess": "Dictionary entry created",
+      "updateSuccess": "Dictionary entry updated",
+      "deleteSuccess": "Dictionary entry deleted",
+      "deleteBulkSuccess": "{{count}} dictionary entries deleted"
+    },
+    "form": {
+      "sort": "Sort",
+      "label": "Label",
+      "value": "Value",
+      "status": "Status",
+      "colorType": "Color Type",
+      "cssClass": "CSS Class",
+      "remark": "Remark",
+      "labelPlaceholder": "Up to 100 characters",
+      "valuePlaceholder": "Up to 100 characters",
+      "colorTypePlaceholder": "Select a color preset",
+      "cssClassPlaceholder": "Optional CSS class",
+      "sortRequired": "Sort is required",
+      "labelRequired": "Label is required",
+      "labelLength": "Label must be at most 100 characters",
+      "valueRequired": "Value is required",
+      "valueLength": "Value must be at most 100 characters",
+      "statusRequired": "Status is required",
+      "remarkLength": "Remark must be at most 500 characters"
+    },
+    "modal": {
+      "createTitle": "Create Dictionary Entry",
+      "editTitle": "Edit Dictionary Entry",
+      "discardChanges": "Discard unsaved changes?",
+      "discardConfirm": "Discard",
+      "loading": "Loading..."
+    },
+    "colorType": {
+      "default": "Default",
+      "primary": "Primary",
+      "success": "Success",
+      "info": "Info",
+      "warning": "Warning",
+      "danger": "Danger"
+    },
+    "errors": {
+      "missingDictType": "Dictionary type not specified",
+      "missingDictTypeHint": "Open dictionary data from a dictionary type's View Data button."
+    }
+  }
+}

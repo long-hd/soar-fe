@@ -1,0 +1,58 @@
+{
+  "systemDictType": {
+    "page": {
+      "title": "Dictionary Type Management"
+    },
+    "table": {
+      "name": "Name",
+      "type": "Type",
+      "status": "Status",
+      "createTime": "Created At",
+      "actions": "Actions"
+    },
+    "search": {
+      "name": "Name",
+      "type": "Type",
+      "status": "Status",
+      "createTime": "Created Range"
+    },
+    "actions": {
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "viewData": "View Data",
+      "deleteSelected": "Delete {{count}} selected"
+    },
+    "confirm": {
+      "deleteOne": "Delete dictionary type \"{{name}}\"?",
+      "deleteMany": "Delete {{count}} dictionary types?"
+    },
+    "messages": {
+      "createSuccess": "Dictionary type created",
+      "updateSuccess": "Dictionary type updated",
+      "deleteSuccess": "Dictionary type deleted",
+      "deleteBulkSuccess": "{{count}} dictionary types deleted"
+    },
+    "form": {
+      "name": "Name",
+      "type": "Type",
+      "status": "Status",
+      "remark": "Remark",
+      "namePlaceholder": "Up to 100 characters",
+      "typePlaceholder": "Up to 100 characters",
+      "nameRequired": "Name is required",
+      "nameLength": "Name must be at most 100 characters",
+      "typeRequired": "Type is required",
+      "typeLength": "Type must be at most 100 characters",
+      "statusRequired": "Status is required",
+      "remarkLength": "Remark must be at most 500 characters"
+    },
+    "modal": {
+      "createTitle": "Create Dictionary Type",
+      "editTitle": "Edit Dictionary Type",
+      "discardChanges": "Discard unsaved changes?",
+      "discardConfirm": "Discard",
+      "loading": "Loading..."
+    }
+  }
+}

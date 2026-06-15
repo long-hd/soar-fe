@@ -8,6 +8,8 @@ import viTagsView from '../locales/vi/tags-view.json'
 import viSystemUser from '../locales/vi/system-user.json'
 import viSystemRole from '../locales/vi/system-role.json'
 import viSystemDept from '../locales/vi/system-dept.json'
+import viSystemDictType from '../locales/vi/system-dict-type.json'
+import viSystemDictData from '../locales/vi/system-dict-data.json'
 
 export default {
   ...viCommon,
@@ -19,4 +21,6 @@ export default {
   ...viSystemUser,
   ...viSystemRole,
   ...viSystemDept,
+  ...viSystemDictType,
+  ...viSystemDictData,
 }

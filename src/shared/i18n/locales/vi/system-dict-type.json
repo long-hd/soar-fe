@@ -1,0 +1,58 @@
+{
+  "systemDictType": {
+    "page": {
+      "title": "Quản lý loại từ điển"
+    },
+    "table": {
+      "name": "Tên",
+      "type": "Mã loại",
+      "status": "Trạng thái",
+      "createTime": "Ngày tạo",
+      "actions": "Thao tác"
+    },
+    "search": {
+      "name": "Tên",
+      "type": "Mã loại",
+      "status": "Trạng thái",
+      "createTime": "Khoảng thời gian"
+    },
+    "actions": {
+      "create": "Tạo mới",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "viewData": "Xem dữ liệu",
+      "deleteSelected": "Xóa {{count}} mục đã chọn"
+    },
+    "confirm": {
+      "deleteOne": "Xóa loại từ điển \"{{name}}\"?",
+      "deleteMany": "Xóa {{count}} loại từ điển?"
+    },
+    "messages": {
+      "createSuccess": "Đã tạo loại từ điển",
+      "updateSuccess": "Đã cập nhật loại từ điển",
+      "deleteSuccess": "Đã xóa loại từ điển",
+      "deleteBulkSuccess": "Đã xóa {{count}} loại từ điển"
+    },
+    "form": {
+      "name": "Tên",
+      "type": "Mã loại",
+      "status": "Trạng thái",
+      "remark": "Ghi chú",
+      "namePlaceholder": "Tối đa 100 ký tự",
+      "typePlaceholder": "Tối đa 100 ký tự",
+      "nameRequired": "Vui lòng nhập tên",
+      "nameLength": "Tên tối đa 100 ký tự",
+      "typeRequired": "Vui lòng nhập mã loại",
+      "typeLength": "Mã loại tối đa 100 ký tự",
+      "statusRequired": "Vui lòng chọn trạng thái",
+      "remarkLength": "Ghi chú tối đa 500 ký tự"
+    },
+    "modal": {
+      "createTitle": "Tạo loại từ điển",
+      "editTitle": "Chỉnh sửa loại từ điển",
+      "discardChanges": "Hủy các thay đổi chưa lưu?",
+      "discardConfirm": "Hủy bỏ",
+      "loading": "Đang tải..."
+    }
+  }
+}

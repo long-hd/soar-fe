@@ -1,0 +1,76 @@
+{
+  "systemDictData": {
+    "page": {
+      "title": "Dữ liệu từ điển: {{name}}"
+    },
+    "tabTitle": "Dữ liệu: {{name}}",
+    "table": {
+      "sort": "Thứ tự",
+      "label": "Nhãn",
+      "value": "Giá trị",
+      "status": "Trạng thái",
+      "colorType": "Màu",
+      "createTime": "Ngày tạo",
+      "actions": "Thao tác"
+    },
+    "search": {
+      "label": "Nhãn",
+      "status": "Trạng thái"
+    },
+    "actions": {
+      "create": "Tạo mới",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "deleteSelected": "Xóa {{count}} mục đã chọn"
+    },
+    "confirm": {
+      "deleteOne": "Xóa mục từ điển \"{{name}}\"?",
+      "deleteMany": "Xóa {{count}} mục từ điển?"
+    },
+    "messages": {
+      "createSuccess": "Đã tạo mục từ điển",
+      "updateSuccess": "Đã cập nhật mục từ điển",
+      "deleteSuccess": "Đã xóa mục từ điển",
+      "deleteBulkSuccess": "Đã xóa {{count}} mục từ điển"
+    },
+    "form": {
+      "sort": "Thứ tự",
+      "label": "Nhãn",
+      "value": "Giá trị",
+      "status": "Trạng thái",
+      "colorType": "Loại màu",
+      "cssClass": "Lớp CSS",
+      "remark": "Ghi chú",
+      "labelPlaceholder": "Tối đa 100 ký tự",
+      "valuePlaceholder": "Tối đa 100 ký tự",
+      "colorTypePlaceholder": "Chọn màu",
+      "cssClassPlaceholder": "Lớp CSS tùy chọn",
+      "sortRequired": "Vui lòng nhập thứ tự",
+      "labelRequired": "Vui lòng nhập nhãn",
+      "labelLength": "Nhãn tối đa 100 ký tự",
+      "valueRequired": "Vui lòng nhập giá trị",
+      "valueLength": "Giá trị tối đa 100 ký tự",
+      "statusRequired": "Vui lòng chọn trạng thái",
+      "remarkLength": "Ghi chú tối đa 500 ký tự"
+    },
+    "modal": {
+      "createTitle": "Tạo mục từ điển",
+      "editTitle": "Chỉnh sửa mục từ điển",
+      "discardChanges": "Hủy các thay đổi chưa lưu?",
+      "discardConfirm": "Hủy bỏ",
+      "loading": "Đang tải..."
+    },
+    "colorType": {
+      "default": "Mặc định",
+      "primary": "Chính",
+      "success": "Thành công",
+      "info": "Thông tin",
+      "warning": "Cảnh báo",
+      "danger": "Nguy hiểm"
+    },
+    "errors": {
+      "missingDictType": "Chưa chỉ định loại từ điển",
+      "missingDictTypeHint": "Mở dữ liệu từ điển qua nút Xem dữ liệu trên trang loại từ điển."
+    }
+  }
+}
