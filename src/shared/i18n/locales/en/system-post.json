@@ -1,0 +1,60 @@
+{
+  "systemPost": {
+    "page": {
+      "title": "Post Management"
+    },
+    "table": {
+      "name": "Post Name",
+      "code": "Post Code",
+      "sort": "Sort",
+      "status": "Status",
+      "createTime": "Created At",
+      "actions": "Actions"
+    },
+    "search": {
+      "code": "Post Code",
+      "name": "Post Name",
+      "status": "Status"
+    },
+    "actions": {
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteSelected": "Delete {{count}} selected"
+    },
+    "confirm": {
+      "deleteOne": "Delete post \"{{name}}\"?",
+      "deleteMany": "Delete {{count}} posts?"
+    },
+    "messages": {
+      "createSuccess": "Post created",
+      "updateSuccess": "Post updated",
+      "deleteSuccess": "Post deleted",
+      "deleteBulkSuccess": "{{count}} posts deleted"
+    },
+    "form": {
+      "name": "Post Name",
+      "code": "Post Code",
+      "sort": "Sort",
+      "status": "Status",
+      "remark": "Remark",
+      "namePlaceholder": "Up to 50 characters",
+      "codePlaceholder": "Up to 64 characters",
+      "sortPlaceholder": "Display order",
+      "nameRequired": "Post name is required",
+      "nameLength": "Post name must be at most 50 characters",
+      "codeRequired": "Post code is required",
+      "codeLength": "Post code must be at most 64 characters",
+      "sortRequired": "Sort is required",
+      "statusRequired": "Status is required",
+      "remarkLength": "Remark must be at most 500 characters"
+    },
+    "modal": {
+      "createTitle": "Create Post",
+      "editTitle": "Edit Post",
+      "discardChanges": "Discard unsaved changes?",
+      "discardConfirm": "Discard",
+      "loading": "Loading..."
+    }
+  }
+}

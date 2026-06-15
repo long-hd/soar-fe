@@ -11,6 +11,7 @@ import viSystemDept from '../locales/vi/system-dept.json'
 import viSystemDictType from '../locales/vi/system-dict-type.json'
 import viSystemDictData from '../locales/vi/system-dict-data.json'
 import viSystemMenu from '../locales/vi/system-menu.json'
+import viSystemPost from '../locales/vi/system-post.json'
 
 export default {
   ...viCommon,
@@ -25,4 +26,5 @@ export default {
   ...viSystemDictType,
   ...viSystemDictData,
   ...viSystemMenu,
+  ...viSystemPost,
 }

@@ -11,6 +11,7 @@ import enSystemDept from '../locales/en/system-dept.json'
 import enSystemDictType from '../locales/en/system-dict-type.json'
 import enSystemDictData from '../locales/en/system-dict-data.json'
 import enSystemMenu from '../locales/en/system-menu.json'
+import enSystemPost from '../locales/en/system-post.json'
 
 export default {
   ...enCommon,
@@ -25,4 +26,5 @@ export default {
   ...enSystemDictType,
   ...enSystemDictData,
   ...enSystemMenu,
+  ...enSystemPost,
 }

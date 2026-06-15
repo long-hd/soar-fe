@@ -1,0 +1,60 @@
+{
+  "systemPost": {
+    "page": {
+      "title": "Quản lý chức vụ"
+    },
+    "table": {
+      "name": "Tên chức vụ",
+      "code": "Mã chức vụ",
+      "sort": "Thứ tự",
+      "status": "Trạng thái",
+      "createTime": "Ngày tạo",
+      "actions": "Thao tác"
+    },
+    "search": {
+      "code": "Mã chức vụ",
+      "name": "Tên chức vụ",
+      "status": "Trạng thái"
+    },
+    "actions": {
+      "create": "Tạo mới",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "deleteSelected": "Xóa {{count}} mục đã chọn"
+    },
+    "confirm": {
+      "deleteOne": "Xóa chức vụ \"{{name}}\"?",
+      "deleteMany": "Xóa {{count}} chức vụ?"
+    },
+    "messages": {
+      "createSuccess": "Đã tạo chức vụ",
+      "updateSuccess": "Đã cập nhật chức vụ",
+      "deleteSuccess": "Đã xóa chức vụ",
+      "deleteBulkSuccess": "Đã xóa {{count}} chức vụ"
+    },
+    "form": {
+      "name": "Tên chức vụ",
+      "code": "Mã chức vụ",
+      "sort": "Thứ tự",
+      "status": "Trạng thái",
+      "remark": "Ghi chú",
+      "namePlaceholder": "Tối đa 50 ký tự",
+      "codePlaceholder": "Tối đa 64 ký tự",
+      "sortPlaceholder": "Thứ tự hiển thị",
+      "nameRequired": "Vui lòng nhập tên chức vụ",
+      "nameLength": "Tên chức vụ tối đa 50 ký tự",
+      "codeRequired": "Vui lòng nhập mã chức vụ",
+      "codeLength": "Mã chức vụ tối đa 64 ký tự",
+      "sortRequired": "Vui lòng nhập thứ tự",
+      "statusRequired": "Vui lòng chọn trạng thái",
+      "remarkLength": "Ghi chú tối đa 500 ký tự"
+    },
+    "modal": {
+      "createTitle": "Tạo chức vụ",
+      "editTitle": "Chỉnh sửa chức vụ",
+      "discardChanges": "Hủy các thay đổi chưa lưu?",
+      "discardConfirm": "Hủy bỏ",
+      "loading": "Đang tải..."
+    }
+  }
+}
