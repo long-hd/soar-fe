@@ -1,0 +1,90 @@
+{
+  "systemMenu": {
+    "page": {
+      "title": "Quản lý menu"
+    },
+    "type": {
+      "dir": "Thư mục",
+      "menu": "Menu",
+      "button": "Nút"
+    },
+    "table": {
+      "name": "Tên menu",
+      "type": "Loại",
+      "sort": "Thứ tự",
+      "tabKey": "Tab Key",
+      "permission": "Quyền",
+      "status": "Trạng thái",
+      "createTime": "Ngày tạo",
+      "actions": "Thao tác"
+    },
+    "search": {
+      "name": "Tên menu",
+      "status": "Trạng thái"
+    },
+    "actions": {
+      "create": "Tạo mới",
+      "edit": "Sửa",
+      "addChild": "Thêm con",
+      "delete": "Xóa",
+      "deleteSelected": "Xóa {{count}} mục đã chọn",
+      "deleteHasChildren": "Không thể xóa menu có menu con"
+    },
+    "confirm": {
+      "deleteOne": "Xóa menu \"{{name}}\"?",
+      "deleteMany": "Xóa {{count}} menu?"
+    },
+    "messages": {
+      "createSuccess": "Đã tạo menu",
+      "updateSuccess": "Đã cập nhật menu",
+      "deleteSuccess": "Đã xóa menu",
+      "deleteBulkSuccess": "Đã xóa {{count}} menu"
+    },
+    "form": {
+      "type": "Loại menu",
+      "name": "Tên menu",
+      "parentId": "Menu cha",
+      "sort": "Thứ tự",
+      "status": "Trạng thái",
+      "icon": "Biểu tượng",
+      "path": "Đường dẫn",
+      "tabKey": "Tab Key",
+      "component": "Đường dẫn component",
+      "componentName": "Tên component",
+      "permission": "Mã quyền",
+      "visible": "Hiển thị",
+      "keepAlive": "Giữ tab",
+      "alwaysShow": "Luôn hiển thị",
+      "typePlaceholder": "Chọn loại menu",
+      "namePlaceholder": "Tối đa 50 ký tự",
+      "parentIdPlaceholder": "Chọn menu cha (trống = gốc)",
+      "sortPlaceholder": "Thứ tự hiển thị",
+      "iconPlaceholder": "Iconify id, vd. mdi:home",
+      "pathPlaceholder": "Đường dẫn route (tùy chọn)",
+      "tabKeyPlaceholder": "Tab key URL, vd. system-user",
+      "componentPlaceholder": "Đường dẫn trang, vd. system/user/index",
+      "componentNamePlaceholder": "Tên component (tùy chọn)",
+      "permissionPlaceholder": "Mã quyền, vd. system:menu:create",
+      "typeRequired": "Loại menu là bắt buộc",
+      "nameRequired": "Tên menu là bắt buộc",
+      "nameLength": "Tên menu tối đa 50 ký tự",
+      "sortRequired": "Thứ tự là bắt buộc",
+      "statusRequired": "Trạng thái là bắt buộc",
+      "tabKeyRequired": "Tab key bắt buộc với loại menu",
+      "tabKeyLength": "Tab key tối đa 100 ký tự",
+      "tabKeyDuplicate": "Tab key đã tồn tại",
+      "componentRequired": "Đường dẫn component bắt buộc với loại menu",
+      "componentLength": "Đường dẫn component tối đa 200 ký tự",
+      "pathLength": "Đường dẫn tối đa 200 ký tự",
+      "permissionRequired": "Mã quyền bắt buộc với loại nút",
+      "permissionLength": "Mã quyền tối đa 100 ký tự"
+    },
+    "modal": {
+      "createTitle": "Tạo menu",
+      "editTitle": "Sửa menu",
+      "discardChanges": "Bỏ thay đổi chưa lưu?",
+      "discardConfirm": "Bỏ",
+      "loading": "Đang tải..."
+    }
+  }
+}

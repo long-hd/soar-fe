@@ -1,0 +1,90 @@
+{
+  "systemMenu": {
+    "page": {
+      "title": "Menu Management"
+    },
+    "type": {
+      "dir": "Directory",
+      "menu": "Menu",
+      "button": "Button"
+    },
+    "table": {
+      "name": "Menu Name",
+      "type": "Type",
+      "sort": "Sort",
+      "tabKey": "Tab Key",
+      "permission": "Permission",
+      "status": "Status",
+      "createTime": "Created At",
+      "actions": "Actions"
+    },
+    "search": {
+      "name": "Menu Name",
+      "status": "Status"
+    },
+    "actions": {
+      "create": "Create",
+      "edit": "Edit",
+      "addChild": "Add Child",
+      "delete": "Delete",
+      "deleteSelected": "Delete {{count}} selected",
+      "deleteHasChildren": "Cannot delete menu with children"
+    },
+    "confirm": {
+      "deleteOne": "Delete menu \"{{name}}\"?",
+      "deleteMany": "Delete {{count}} menus?"
+    },
+    "messages": {
+      "createSuccess": "Menu created",
+      "updateSuccess": "Menu updated",
+      "deleteSuccess": "Menu deleted",
+      "deleteBulkSuccess": "{{count}} menus deleted"
+    },
+    "form": {
+      "type": "Menu Type",
+      "name": "Menu Name",
+      "parentId": "Parent Menu",
+      "sort": "Sort",
+      "status": "Status",
+      "icon": "Icon",
+      "path": "Route Path",
+      "tabKey": "Tab Key",
+      "component": "Component Path",
+      "componentName": "Component Name",
+      "permission": "Permission",
+      "visible": "Visible",
+      "keepAlive": "Keep Alive",
+      "alwaysShow": "Always Show",
+      "typePlaceholder": "Select menu type",
+      "namePlaceholder": "Up to 50 characters",
+      "parentIdPlaceholder": "Select parent (empty = root)",
+      "sortPlaceholder": "Display order",
+      "iconPlaceholder": "Iconify icon id, e.g. mdi:home",
+      "pathPlaceholder": "Route path (optional)",
+      "tabKeyPlaceholder": "URL tab key, e.g. system-user",
+      "componentPlaceholder": "Page component path, e.g. system/user/index",
+      "componentNamePlaceholder": "Component name (optional)",
+      "permissionPlaceholder": "Permission code, e.g. system:menu:create",
+      "typeRequired": "Menu type is required",
+      "nameRequired": "Menu name is required",
+      "nameLength": "Menu name must be at most 50 characters",
+      "sortRequired": "Sort is required",
+      "statusRequired": "Status is required",
+      "tabKeyRequired": "Tab key is required for menu type",
+      "tabKeyLength": "Tab key must be at most 100 characters",
+      "tabKeyDuplicate": "Tab key already exists",
+      "componentRequired": "Component path is required for menu type",
+      "componentLength": "Component path must be at most 200 characters",
+      "pathLength": "Route path must be at most 200 characters",
+      "permissionRequired": "Permission is required for button type",
+      "permissionLength": "Permission must be at most 100 characters"
+    },
+    "modal": {
+      "createTitle": "Create Menu",
+      "editTitle": "Edit Menu",
+      "discardChanges": "Discard unsaved changes?",
+      "discardConfirm": "Discard",
+      "loading": "Loading..."
+    }
+  }
+}
