@@ -9,6 +9,7 @@
       "sort": "Sort",
       "status": "Status",
       "type": "Type",
+      "dataScope": "Data Scope",
       "createTime": "Created At",
       "actions": "Actions"
     },
@@ -22,7 +23,9 @@
       "create": "Create",
       "edit": "Edit",
       "delete": "Delete",
-      "deleteSelected": "Delete {{count}} selected"
+      "deleteSelected": "Delete {{count}} selected",
+      "more": "More",
+      "dataScope": "Data Scope"
     },
     "confirm": {
       "deleteOne": "Delete role \"{{name}}\"?",
@@ -57,6 +60,26 @@
       "discardChanges": "Discard unsaved changes?",
       "discardConfirm": "Discard",
       "loading": "Loading..."
+    },
+    "dataScope": {
+      "title": "Data Scope — {{name}}",
+      "description": "Configure which data this role can access.",
+      "loading": "Loading role data scope…",
+      "field": {
+        "scope": "Scope",
+        "deptIds": "Departments"
+      },
+      "placeholder": {
+        "scope": "Select a scope",
+        "depts": "Select departments"
+      },
+      "validation": {
+        "scopeRequired": "Scope is required",
+        "deptsRequired": "Select at least one department"
+      },
+      "messages": {
+        "assignSuccess": "Data scope updated"
+      }
     }
   }
 }

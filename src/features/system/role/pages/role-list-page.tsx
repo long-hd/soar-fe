@@ -1,9 +1,9 @@
 import { Icon } from '@iconify/react'
-import { App, Button, Card, Space, Table, Tooltip, type TableColumnsType } from 'antd'
+import { App, Button, Card, Dropdown, Space, Table, Tooltip, type TableColumnsType } from 'antd'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { HasPermission } from '@/features/permission'
+import { HasPermission, usePermission } from '@/features/permission'
 import { DictTag } from '@/shared/components/dict-tag'
 import { formatDateTime } from '@/shared/lib/format'
 import { usePagedQuery } from '@/shared/hooks/use-paged-query'
@@ -12,6 +12,7 @@ import { useTableState } from '@/shared/hooks/use-table-state'
 import { roleApi } from '../api'
 import { ROLE_DICT_TYPES, ROLE_PERMISSIONS, ROLE_TYPE } from '../constants'
 import type { RoleFilters, RoleRespDTO } from '../types'
+import { RoleDataScopeModal } from '@/features/system/role/components/role-data-scope-modal'
 import { RoleSearchForm } from '@/features/system/role/components/role-search-form'
 import { RoleFormModal } from '@/features/system/role/components/role-form-modal'
 import { sysRoleQueryKey, useRoleMutations } from '@/features/system/role/hooks'
@@ -19,6 +20,7 @@ import { sysRoleQueryKey, useRoleMutations } from '@/features/system/role/hooks'
 export function RoleListPage() {
   const { t } = useTranslation()
   const { modal } = App.useApp()
+  const { has } = usePermission()
 
   const [searchVisible, setSearchVisible] = useState(true)
   const tableState = useTableState<RoleFilters>({})
@@ -26,6 +28,10 @@ export function RoleListPage() {
   const [formModal, setFormModal] = useState<{ open: boolean; roleId?: number }>({
     open: false,
   })
+  const [dataScopeModal, setDataScopeModal] = useState<{
+    open: boolean
+    role: RoleRespDTO | null
+  }>({ open: false, role: null })
 
   const { tableProps, refetch } = usePagedQuery<RoleRespDTO, RoleFilters>({
     baseQueryKey: sysRoleQueryKey.all,
@@ -41,6 +47,14 @@ export function RoleListPage() {
 
   const handleEdit = (role: RoleRespDTO) => {
     setFormModal({ open: true, roleId: role.id })
+  }
+
+  const handleOpenDataScope = (role: RoleRespDTO) => {
+    setDataScopeModal({ open: true, role })
+  }
+
+  const handleCloseDataScope = () => {
+    setDataScopeModal({ open: false, role: null })
   }
 
   const handleDeleteOne = (role: RoleRespDTO) => {
@@ -93,6 +107,13 @@ export function RoleListPage() {
       render: (type: number) => <DictTag dictType={ROLE_DICT_TYPES.type} value={type} />,
     },
     {
+      title: t('systemRole.table.dataScope'),
+      dataIndex: 'dataScope',
+      render: (dataScope: number) => (
+        <DictTag dictType={ROLE_DICT_TYPES.dataScope} value={dataScope} />
+      ),
+    },
+    {
       title: t('systemRole.table.createTime'),
       dataIndex: 'createTime',
       render: (v: string) => formatDateTime(v),
@@ -100,32 +121,55 @@ export function RoleListPage() {
     {
       title: t('systemRole.table.actions'),
       key: 'actions',
-      width: 200,
-      render: (_, record) => (
-        <Space size="small">
-          <HasPermission code={ROLE_PERMISSIONS.update}>
-            <Button
-              type="link"
-              size="small"
-              disabled={isSystemRole(record)}
-              onClick={() => handleEdit(record)}
-            >
-              {t('systemRole.actions.edit')}
-            </Button>
-          </HasPermission>
-          <HasPermission code={ROLE_PERMISSIONS.delete}>
-            <Button
-              type="link"
-              size="small"
-              danger
-              disabled={isSystemRole(record)}
-              onClick={() => handleDeleteOne(record)}
-            >
-              {t('systemRole.actions.delete')}
-            </Button>
-          </HasPermission>
-        </Space>
-      ),
+      width: 260,
+      render: (_, record) => {
+        const moreMenuItems = [
+          ...(has(ROLE_PERMISSIONS.assignDataScope)
+            ? [
+                {
+                  key: 'dataScope',
+                  label: t('systemRole.actions.dataScope'),
+                  disabled: isSystemRole(record),
+                  onClick: () => handleOpenDataScope(record),
+                },
+              ]
+            : []),
+        ]
+        const showMoreMenu = moreMenuItems.length > 0
+
+        return (
+          <Space size="small">
+            <HasPermission code={ROLE_PERMISSIONS.update}>
+              <Button
+                type="link"
+                size="small"
+                disabled={isSystemRole(record)}
+                onClick={() => handleEdit(record)}
+              >
+                {t('systemRole.actions.edit')}
+              </Button>
+            </HasPermission>
+            <HasPermission code={ROLE_PERMISSIONS.delete}>
+              <Button
+                type="link"
+                size="small"
+                danger
+                disabled={isSystemRole(record)}
+                onClick={() => handleDeleteOne(record)}
+              >
+                {t('systemRole.actions.delete')}
+              </Button>
+            </HasPermission>
+            {showMoreMenu ? (
+              <Dropdown menu={{ items: moreMenuItems }} trigger={['hover']}>
+                <Button type="link" size="small" icon={<Icon icon="mdi:dots-vertical" />}>
+                  {t('systemRole.actions.more')}
+                </Button>
+              </Dropdown>
+            ) : null}
+          </Space>
+        )
+      },
     },
   ]
 
@@ -204,6 +248,12 @@ export function RoleListPage() {
         open={formModal.open}
         roleId={formModal.roleId}
         onClose={() => setFormModal({ open: false })}
+      />
+
+      <RoleDataScopeModal
+        open={dataScopeModal.open}
+        role={dataScopeModal.role}
+        onClose={handleCloseDataScope}
       />
     </Card>
   )

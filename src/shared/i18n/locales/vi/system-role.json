@@ -9,6 +9,7 @@
       "sort": "Thứ tự",
       "status": "Trạng thái",
       "type": "Loại",
+      "dataScope": "Phạm vi dữ liệu",
       "createTime": "Ngày tạo",
       "actions": "Thao tác"
     },
@@ -22,7 +23,9 @@
       "create": "Tạo mới",
       "edit": "Sửa",
       "delete": "Xóa",
-      "deleteSelected": "Xóa {{count}} mục đã chọn"
+      "deleteSelected": "Xóa {{count}} mục đã chọn",
+      "more": "Khác",
+      "dataScope": "Phạm vi dữ liệu"
     },
     "confirm": {
       "deleteOne": "Xóa vai trò \"{{name}}\"?",
@@ -57,6 +60,26 @@
       "discardChanges": "Hủy các thay đổi chưa lưu?",
       "discardConfirm": "Hủy bỏ",
       "loading": "Đang tải..."
+    },
+    "dataScope": {
+      "title": "Phạm vi dữ liệu — {{name}}",
+      "description": "Cấu hình dữ liệu mà vai trò này có thể truy cập.",
+      "loading": "Đang tải phạm vi dữ liệu vai trò…",
+      "field": {
+        "scope": "Phạm vi",
+        "deptIds": "Phòng ban"
+      },
+      "placeholder": {
+        "scope": "Vui lòng chọn phạm vi",
+        "depts": "Chọn phòng ban"
+      },
+      "validation": {
+        "scopeRequired": "Vui lòng chọn phạm vi",
+        "deptsRequired": "Vui lòng chọn ít nhất một phòng ban"
+      },
+      "messages": {
+        "assignSuccess": "Đã cập nhật phạm vi dữ liệu"
+      }
     }
   }
 }

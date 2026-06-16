@@ -5,6 +5,7 @@ export const ROLE_PERMISSIONS = {
   create: 'system:role:create',
   update: 'system:role:update',
   delete: 'system:role:delete',
+  assignDataScope: 'system:permission:assign-role-data-scope',
 } as const
 
 // ===== Dict types =====
@@ -12,6 +13,7 @@ export const ROLE_PERMISSIONS = {
 export const ROLE_DICT_TYPES = {
   status: 'common_status',
   type: 'system_role_type',
+  dataScope: 'system_data_scope',
 } as const
 
 // ===== Enum values (BE source of truth) =====
@@ -26,4 +28,13 @@ export const ROLE_STATUS = {
 export const ROLE_TYPE = {
   SYSTEM: 1,
   CUSTOM: 2,
+} as const
+
+/** Matches BE `DataScopeEnum`. */
+export const ROLE_DATA_SCOPE = {
+  ALL: 1,
+  DEPT_CUSTOM: 2,
+  DEPT_ONLY: 3,
+  DEPT_AND_CHILD: 4,
+  SELF: 5,
 } as const

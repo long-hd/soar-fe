@@ -3,7 +3,7 @@ import { App } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 import { roleApi } from '@/features/system/role/api'
-import type { RoleSaveReqDTO } from '@/features/system/role/types'
+import type { RoleAssignDataScopeReqDTO, RoleSaveReqDTO } from '@/features/system/role/types'
 
 export const ROLE_QUERY_KEY = ['system', 'role'] as const
 
@@ -68,5 +68,13 @@ export function useRoleMutations() {
     },
   })
 
-  return { create, update, remove, removeMany }
+  const assignDataScope = useMutation({
+    mutationFn: (data: RoleAssignDataScopeReqDTO) => roleApi.assignDataScope(data),
+    onSuccess: () => {
+      message.success(t('systemRole.dataScope.messages.assignSuccess'))
+      void invalidateList()
+    },
+  })
+
+  return { create, update, remove, removeMany, assignDataScope }
 }

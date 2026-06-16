@@ -29,6 +29,14 @@ export interface RoleSaveReqDTO {
   remark?: string
 }
 
+// ===== Request — Assign data scope =====
+
+export interface RoleAssignDataScopeReqDTO {
+  roleId: number
+  dataScope: number
+  dataScopeDeptIds?: number[] | null
+}
+
 // ===== Search filters =====
 
 export interface RoleFilters extends Record<string, unknown> {

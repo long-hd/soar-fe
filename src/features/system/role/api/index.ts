@@ -1,6 +1,11 @@
 import { request } from '@/shared/api/http-client'
 import type { CommonResult, PageResult } from '@/shared/api/types'
-import type { RolePageReqParams, RoleRespDTO, RoleSaveReqDTO } from '../types'
+import type {
+  RoleAssignDataScopeReqDTO,
+  RolePageReqParams,
+  RoleRespDTO,
+  RoleSaveReqDTO,
+} from '../types'
 
 const BASE = '/admin-api/system/role'
 
@@ -39,5 +44,11 @@ export const roleApi = {
 
   simpleList(): Promise<RoleRespDTO[]> {
     return request.get<CommonResult<RoleRespDTO[]>>(`${BASE}/simple-list`).then(r => r.data.data)
+  },
+
+  assignDataScope(data: RoleAssignDataScopeReqDTO): Promise<boolean> {
+    return request
+      .post<CommonResult<boolean>>('/admin-api/system/permission/assign-role-data-scope', data)
+      .then(r => r.data.data)
   },
 }
