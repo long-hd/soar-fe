@@ -13,6 +13,7 @@ import { roleApi } from '../api'
 import { ROLE_DICT_TYPES, ROLE_PERMISSIONS, ROLE_TYPE } from '../constants'
 import type { RoleFilters, RoleRespDTO } from '../types'
 import { RoleDataScopeModal } from '@/features/system/role/components/role-data-scope-modal'
+import { RoleMenuAssignmentModal } from '@/features/system/role/components/role-menu-assignment-modal'
 import { RoleSearchForm } from '@/features/system/role/components/role-search-form'
 import { RoleFormModal } from '@/features/system/role/components/role-form-modal'
 import { sysRoleQueryKey, useRoleMutations } from '@/features/system/role/hooks'
@@ -29,6 +30,10 @@ export function RoleListPage() {
     open: false,
   })
   const [dataScopeModal, setDataScopeModal] = useState<{
+    open: boolean
+    role: RoleRespDTO | null
+  }>({ open: false, role: null })
+  const [menuAssignmentModal, setMenuAssignmentModal] = useState<{
     open: boolean
     role: RoleRespDTO | null
   }>({ open: false, role: null })
@@ -55,6 +60,14 @@ export function RoleListPage() {
 
   const handleCloseDataScope = () => {
     setDataScopeModal({ open: false, role: null })
+  }
+
+  const handleOpenMenuAssignment = (role: RoleRespDTO) => {
+    setMenuAssignmentModal({ open: true, role })
+  }
+
+  const handleCloseMenuAssignment = () => {
+    setMenuAssignmentModal({ open: false, role: null })
   }
 
   const handleDeleteOne = (role: RoleRespDTO) => {
@@ -131,6 +144,16 @@ export function RoleListPage() {
                   label: t('systemRole.actions.dataScope'),
                   disabled: isSystemRole(record),
                   onClick: () => handleOpenDataScope(record),
+                },
+              ]
+            : []),
+          ...(has(ROLE_PERMISSIONS.assignMenu)
+            ? [
+                {
+                  key: 'menu',
+                  label: t('systemRole.actions.menu'),
+                  disabled: isSystemRole(record),
+                  onClick: () => handleOpenMenuAssignment(record),
                 },
               ]
             : []),
@@ -254,6 +277,12 @@ export function RoleListPage() {
         open={dataScopeModal.open}
         role={dataScopeModal.role}
         onClose={handleCloseDataScope}
+      />
+
+      <RoleMenuAssignmentModal
+        open={menuAssignmentModal.open}
+        role={menuAssignmentModal.role}
+        onClose={handleCloseMenuAssignment}
       />
     </Card>
   )

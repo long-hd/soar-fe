@@ -2,6 +2,7 @@ import { request } from '@/shared/api/http-client'
 import type { CommonResult, PageResult } from '@/shared/api/types'
 import type {
   RoleAssignDataScopeReqDTO,
+  RoleAssignMenuReqDTO,
   RolePageReqParams,
   RoleRespDTO,
   RoleSaveReqDTO,
@@ -49,6 +50,20 @@ export const roleApi = {
   assignDataScope(data: RoleAssignDataScopeReqDTO): Promise<boolean> {
     return request
       .post<CommonResult<boolean>>('/admin-api/system/permission/assign-role-data-scope', data)
+      .then(r => r.data.data)
+  },
+
+  listRoleMenus(roleId: number): Promise<number[]> {
+    return request
+      .get<CommonResult<number[]>>('/admin-api/system/permission/list-role-menus', {
+        params: { roleId },
+      })
+      .then(r => r.data.data)
+  },
+
+  assignRoleMenu(data: RoleAssignMenuReqDTO): Promise<boolean> {
+    return request
+      .post<CommonResult<boolean>>('/admin-api/system/permission/assign-role-menu', data)
       .then(r => r.data.data)
   },
 }

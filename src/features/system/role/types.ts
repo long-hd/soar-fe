@@ -37,6 +37,13 @@ export interface RoleAssignDataScopeReqDTO {
   dataScopeDeptIds?: number[] | null
 }
 
+// ===== Request — Assign menu permissions =====
+
+export interface RoleAssignMenuReqDTO {
+  roleId: number
+  menuIds: number[]
+}
+
 // ===== Search filters =====
 
 export interface RoleFilters extends Record<string, unknown> {

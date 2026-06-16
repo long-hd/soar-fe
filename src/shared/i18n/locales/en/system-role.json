@@ -25,7 +25,8 @@
       "delete": "Delete",
       "deleteSelected": "Delete {{count}} selected",
       "more": "More",
-      "dataScope": "Data Scope"
+      "dataScope": "Data Scope",
+      "menu": "Menu Permissions"
     },
     "confirm": {
       "deleteOne": "Delete role \"{{name}}\"?",
@@ -79,6 +80,15 @@
       },
       "messages": {
         "assignSuccess": "Data scope updated"
+      }
+    },
+    "menuAssignment": {
+      "title": "Menu Permissions — {{name}}",
+      "description": "Select which menus this role can access. Checking a parent automatically grants access to its children.",
+      "loading": "Loading current menu assignments…",
+      "empty": "No menus available.",
+      "messages": {
+        "success": "Menu permissions updated"
       }
     }
   }

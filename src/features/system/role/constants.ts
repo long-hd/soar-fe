@@ -6,6 +6,7 @@ export const ROLE_PERMISSIONS = {
   update: 'system:role:update',
   delete: 'system:role:delete',
   assignDataScope: 'system:permission:assign-role-data-scope',
+  assignMenu: 'system:permission:assign-role-menu',
 } as const
 
 // ===== Dict types =====

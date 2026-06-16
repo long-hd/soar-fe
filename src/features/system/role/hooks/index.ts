@@ -3,7 +3,11 @@ import { App } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 import { roleApi } from '@/features/system/role/api'
-import type { RoleAssignDataScopeReqDTO, RoleSaveReqDTO } from '@/features/system/role/types'
+import type {
+  RoleAssignDataScopeReqDTO,
+  RoleAssignMenuReqDTO,
+  RoleSaveReqDTO,
+} from '@/features/system/role/types'
 
 export const ROLE_QUERY_KEY = ['system', 'role'] as const
 
@@ -26,6 +30,18 @@ export function useRoleDetailQuery(id: number | undefined, options?: { enabled?:
     queryKey: sysRoleQueryKey.detail(id!),
     queryFn: () => roleApi.get(id!),
     enabled: id != null && (options?.enabled ?? true),
+  })
+}
+
+export function roleMenuIdsQueryKey(roleId: number) {
+  return [...sysRoleQueryKey.all, 'menu-ids', roleId] as const
+}
+
+export function useRoleMenuIdsQuery(roleId: number | undefined, options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: roleMenuIdsQueryKey(roleId!),
+    queryFn: () => roleApi.listRoleMenus(roleId!),
+    enabled: roleId != null && (options?.enabled ?? true),
   })
 }
 
@@ -76,5 +92,13 @@ export function useRoleMutations() {
     },
   })
 
-  return { create, update, remove, removeMany, assignDataScope }
+  const assignRoleMenu = useMutation({
+    mutationFn: (data: RoleAssignMenuReqDTO) => roleApi.assignRoleMenu(data),
+    onSuccess: () => {
+      message.success(t('systemRole.menuAssignment.messages.success'))
+      void invalidateList()
+    },
+  })
+
+  return { create, update, remove, removeMany, assignDataScope, assignRoleMenu }
 }

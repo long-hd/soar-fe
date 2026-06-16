@@ -25,7 +25,8 @@
       "delete": "Xóa",
       "deleteSelected": "Xóa {{count}} mục đã chọn",
       "more": "Khác",
-      "dataScope": "Phạm vi dữ liệu"
+      "dataScope": "Phạm vi dữ liệu",
+      "menu": "Phân quyền menu"
     },
     "confirm": {
       "deleteOne": "Xóa vai trò \"{{name}}\"?",
@@ -79,6 +80,15 @@
       },
       "messages": {
         "assignSuccess": "Đã cập nhật phạm vi dữ liệu"
+      }
+    },
+    "menuAssignment": {
+      "title": "Phân quyền menu — {{name}}",
+      "description": "Chọn menu mà vai trò này có thể truy cập. Chọn menu cha sẽ tự động cấp quyền cho các menu con.",
+      "loading": "Đang tải phân quyền menu hiện tại…",
+      "empty": "Không có menu nào.",
+      "messages": {
+        "success": "Đã cập nhật phân quyền menu"
       }
     }
   }
