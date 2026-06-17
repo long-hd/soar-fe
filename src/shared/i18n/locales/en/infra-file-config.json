@@ -36,6 +36,7 @@
       "region": "Region",
       "regionPlaceholder": "Optional, e.g. us-east-1",
       "domain": "Custom Domain",
+      "domainHelp": "Public URL where this storage is accessible (e.g. your Soar backend host). Required so download links work.",
       "enabledOption": "Enabled",
       "disabledOption": "Disabled"
     },
@@ -66,7 +67,8 @@
     "validation": {
       "nameRequired": "Config name is required",
       "storageRequired": "Storage type is required",
-      "domainRequired": "Custom domain is required",
+      "domainRequired": "Domain is required to generate download URLs",
+      "domainInvalidUrl": "Must be a valid URL starting with http:// or https://",
       "basePathRequired": "Base path is required",
       "endpointRequired": "Endpoint URL is required",
       "bucketRequired": "Bucket is required",

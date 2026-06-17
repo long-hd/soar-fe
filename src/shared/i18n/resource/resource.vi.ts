@@ -13,6 +13,7 @@ import viSystemDictData from '../locales/vi/system-dict-data.json'
 import viSystemMenu from '../locales/vi/system-menu.json'
 import viSystemPost from '../locales/vi/system-post.json'
 import viInfraFileConfig from '../locales/vi/infra-file-config.json'
+import viInfraFile from '../locales/vi/infra-file.json'
 
 export default {
   ...viCommon,
@@ -29,4 +30,5 @@ export default {
   ...viSystemMenu,
   ...viSystemPost,
   ...viInfraFileConfig,
+  ...viInfraFile,
 }

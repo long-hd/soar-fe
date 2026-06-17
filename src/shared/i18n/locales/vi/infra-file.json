@@ -1,0 +1,48 @@
+{
+  "infraFile": {
+    "title": "Quản lý File",
+    "search": {
+      "name": "Tên File",
+      "type": "Loại File",
+      "createTime": "Khoảng thời gian tải lên"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Tên File",
+      "url": "URL",
+      "type": "Loại",
+      "size": "Kích thước",
+      "preview": "Xem trước",
+      "createTime": "Tải lên lúc",
+      "actions": "Thao tác"
+    },
+    "actions": {
+      "upload": "Tải lên",
+      "delete": "Xóa",
+      "deleteSelected": "Xóa {{count}} mục đã chọn",
+      "copyUrl": "Sao chép URL",
+      "preview": "Xem trước",
+      "download": "Tải xuống"
+    },
+    "confirm": {
+      "deleteOne": "Xóa file \"{{name}}\"?",
+      "deleteMany": "Xóa {{count}} file?"
+    },
+    "messages": {
+      "deleteSuccess": "Đã xóa file",
+      "deleteBulkSuccess": "Đã xóa {{count}} file",
+      "uploadSuccess": "Tải lên thành công",
+      "uploadFailed": "Tải lên thất bại",
+      "copySuccess": "Đã sao chép URL",
+      "copyFailed": "Sao chép thất bại"
+    },
+    "upload": {
+      "title": "Tải lên file",
+      "draggerText": "Nhấp hoặc kéo file vào khu vực này để tải lên",
+      "draggerHint": "Hỗ trợ nhiều file. File sẽ sử dụng cấu hình storage chính.",
+      "done": "Xong",
+      "cancelInProgress": "Hủy tải lên đang chạy?",
+      "cancelConfirm": "Hủy tải lên"
+    }
+  }
+}

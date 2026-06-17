@@ -137,33 +137,50 @@ export function FileConfigListPage() {
     {
       title: t('infraFileConfig.table.actions'),
       key: 'actions',
-      width: 280,
+      width: 160,
       render: (_, record) => (
         <Space size="small">
           <HasPermission code={FILE_CONFIG_PERMISSIONS.update}>
-            <Button type="link" size="small" onClick={() => handleEdit(record)}>
-              {t('infraFileConfig.actions.edit')}
-            </Button>
+            <Tooltip title={t('infraFileConfig.actions.edit')}>
+              <Button
+                type="link"
+                size="small"
+                icon={<Icon icon="mdi:pencil-outline" />}
+                onClick={() => handleEdit(record)}
+              />
+            </Tooltip>
           </HasPermission>
           {has(FILE_CONFIG_PERMISSIONS.update) && !record.master ? (
-            <Button type="link" size="small" onClick={() => handleSetMaster(record)}>
-              {t('infraFileConfig.actions.setMaster')}
-            </Button>
+            <Tooltip title={t('infraFileConfig.actions.setMaster')}>
+              <Button
+                type="link"
+                size="small"
+                icon={<Icon icon="mdi:star-outline" />}
+                onClick={() => handleSetMaster(record)}
+              />
+            </Tooltip>
           ) : null}
           <HasPermission code={FILE_CONFIG_PERMISSIONS.query}>
-            <Button
-              type="link"
-              size="small"
-              loading={testingId === record.id}
-              onClick={() => void handleTest(record)}
-            >
-              {t('infraFileConfig.actions.test')}
-            </Button>
+            <Tooltip title={t('infraFileConfig.actions.test')}>
+              <Button
+                type="link"
+                size="small"
+                icon={<Icon icon="mdi:check-circle-outline" />}
+                loading={testingId === record.id}
+                onClick={() => void handleTest(record)}
+              />
+            </Tooltip>
           </HasPermission>
           <HasPermission code={FILE_CONFIG_PERMISSIONS.delete}>
-            <Button type="link" size="small" danger onClick={() => handleDeleteOne(record)}>
-              {t('infraFileConfig.actions.delete')}
-            </Button>
+            <Tooltip title={t('infraFileConfig.actions.delete')}>
+              <Button
+                type="link"
+                size="small"
+                danger
+                icon={<Icon icon="mdi:delete-outline" />}
+                onClick={() => handleDeleteOne(record)}
+              />
+            </Tooltip>
           </HasPermission>
         </Space>
       ),

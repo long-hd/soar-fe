@@ -191,11 +191,10 @@ export function FileConfigFormModal({ open, configId, onClose }: FileConfigFormM
                   <Form.Item
                     name={['config', 'domain']}
                     label={t('infraFileConfig.form.domain')}
+                    tooltip={t('infraFileConfig.form.domainHelp')}
                     rules={[
-                      {
-                        required: true,
-                        message: t('infraFileConfig.validation.domainRequired'),
-                      },
+                      { required: true, message: t('infraFileConfig.validation.domainRequired') },
+                      { type: 'url', message: t('infraFileConfig.validation.domainInvalidUrl') },
                     ]}
                   >
                     <Input placeholder="https://example.com" />
@@ -221,11 +220,10 @@ export function FileConfigFormModal({ open, configId, onClose }: FileConfigFormM
                     <Form.Item
                       name={['config', 'domain']}
                       label={t('infraFileConfig.form.domain')}
+                      tooltip={t('infraFileConfig.form.domainHelp')}
                       rules={[
-                        {
-                          required: true,
-                          message: t('infraFileConfig.validation.domainRequired'),
-                        },
+                        { required: true, message: t('infraFileConfig.validation.domainRequired') },
+                        { type: 'url', message: t('infraFileConfig.validation.domainInvalidUrl') },
                       ]}
                     >
                       <Input placeholder="https://example.com" />
@@ -315,7 +313,13 @@ export function FileConfigFormModal({ open, configId, onClose }: FileConfigFormM
                     <Form.Item name={['config', 'region']} label={t('infraFileConfig.form.region')}>
                       <Input placeholder={t('infraFileConfig.form.regionPlaceholder')} />
                     </Form.Item>
-                    <Form.Item name={['config', 'domain']} label={t('infraFileConfig.form.domain')}>
+                    <Form.Item
+                      name={['config', 'domain']}
+                      label={t('infraFileConfig.form.domain')}
+                      rules={[
+                        { type: 'url', message: t('infraFileConfig.validation.domainInvalidUrl') },
+                      ]}
+                    >
                       <Input placeholder="https://example.com" />
                     </Form.Item>
                   </>

@@ -1,0 +1,48 @@
+{
+  "infraFile": {
+    "title": "File Management",
+    "search": {
+      "name": "File Name",
+      "type": "File Type",
+      "createTime": "Upload Range"
+    },
+    "table": {
+      "id": "ID",
+      "name": "File Name",
+      "url": "URL",
+      "type": "Type",
+      "size": "Size",
+      "preview": "Preview",
+      "createTime": "Uploaded At",
+      "actions": "Actions"
+    },
+    "actions": {
+      "upload": "Upload",
+      "delete": "Delete",
+      "deleteSelected": "Delete {{count}} selected",
+      "copyUrl": "Copy URL",
+      "preview": "Preview",
+      "download": "Download"
+    },
+    "confirm": {
+      "deleteOne": "Delete file \"{{name}}\"?",
+      "deleteMany": "Delete {{count}} files?"
+    },
+    "messages": {
+      "deleteSuccess": "File deleted",
+      "deleteBulkSuccess": "{{count}} files deleted",
+      "uploadSuccess": "Upload succeeded",
+      "uploadFailed": "Upload failed",
+      "copySuccess": "URL copied to clipboard",
+      "copyFailed": "Failed to copy URL"
+    },
+    "upload": {
+      "title": "Upload Files",
+      "draggerText": "Click or drag files to this area to upload",
+      "draggerHint": "Multiple files supported. Files use the master storage config.",
+      "done": "Done",
+      "cancelInProgress": "Cancel upload in progress?",
+      "cancelConfirm": "Cancel uploads"
+    }
+  }
+}

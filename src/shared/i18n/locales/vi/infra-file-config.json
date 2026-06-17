@@ -36,6 +36,7 @@
       "region": "Region",
       "regionPlaceholder": "Optional, e.g. us-east-1",
       "domain": "Custom Domain",
+      "domainHelp": "URL công khai để truy cập storage này (vd. host backend Soar). Bắt buộc để link tải hoạt động.",
       "enabledOption": "Enabled",
       "disabledOption": "Disabled"
     },
@@ -66,7 +67,8 @@
     "validation": {
       "nameRequired": "Config name is required",
       "storageRequired": "Storage type is required",
-      "domainRequired": "Custom domain is required",
+      "domainRequired": "Domain bắt buộc để tạo URL tải xuống",
+      "domainInvalidUrl": "Phải là URL hợp lệ bắt đầu bằng http:// hoặc https://",
       "basePathRequired": "Base path is required",
       "endpointRequired": "Endpoint URL is required",
       "bucketRequired": "Bucket is required",

@@ -13,6 +13,7 @@ import enSystemDictData from '../locales/en/system-dict-data.json'
 import enSystemMenu from '../locales/en/system-menu.json'
 import enSystemPost from '../locales/en/system-post.json'
 import enInfraFileConfig from '../locales/en/infra-file-config.json'
+import enInfraFile from '../locales/en/infra-file.json'
 
 export default {
   ...enCommon,
@@ -29,4 +30,5 @@ export default {
   ...enSystemMenu,
   ...enSystemPost,
   ...enInfraFileConfig,
+  ...enInfraFile,
 }
