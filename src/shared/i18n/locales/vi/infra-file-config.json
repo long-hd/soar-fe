@@ -1,0 +1,87 @@
+{
+  "infraFileConfig": {
+    "title": "File Configuration",
+    "search": {
+      "name": "Config Name",
+      "storage": "Storage Type",
+      "createTime": "Created Range"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Config Name",
+      "storage": "Storage Type",
+      "master": "Master",
+      "masterYes": "Yes",
+      "masterNo": "No",
+      "remark": "Remark",
+      "createTime": "Created At",
+      "actions": "Actions"
+    },
+    "form": {
+      "name": "Config Name",
+      "namePlaceholder": "Enter a recognizable name",
+      "storage": "Storage Type",
+      "remark": "Remark",
+      "basePath": "Base Path",
+      "basePathPlaceholder": "e.g. /tmp/soar-files",
+      "endpoint": "Endpoint URL",
+      "endpointPlaceholder": "e.g. http://localhost:8333",
+      "bucket": "Bucket",
+      "accessKey": "Access Key",
+      "accessSecret": "Secret Key",
+      "enablePathStyleAccess": "Path-style URLs",
+      "enablePublicAccess": "Public Access",
+      "publicLabel": "Public",
+      "privateLabel": "Private (presigned URLs)",
+      "region": "Region",
+      "regionPlaceholder": "Optional, e.g. us-east-1",
+      "domain": "Custom Domain",
+      "enabledOption": "Enabled",
+      "disabledOption": "Disabled"
+    },
+    "actions": {
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteSelected": "Delete {{count}} selected",
+      "setMaster": "Set as Master",
+      "test": "Test"
+    },
+    "confirm": {
+      "deleteOne": "Delete config \"{{name}}\"?",
+      "deleteMany": "Delete {{count}} configs?",
+      "setMaster": "Set \"{{name}}\" as the master config?"
+    },
+    "test": {
+      "success": "Test upload succeeded",
+      "openLink": "Open the uploaded file"
+    },
+    "messages": {
+      "createSuccess": "Config created",
+      "updateSuccess": "Config updated",
+      "deleteSuccess": "Config deleted",
+      "deleteBulkSuccess": "{{count}} configs deleted",
+      "setMasterSuccess": "Master config updated"
+    },
+    "validation": {
+      "nameRequired": "Config name is required",
+      "storageRequired": "Storage type is required",
+      "domainRequired": "Custom domain is required",
+      "basePathRequired": "Base path is required",
+      "endpointRequired": "Endpoint URL is required",
+      "bucketRequired": "Bucket is required",
+      "accessKeyRequired": "Access Key is required",
+      "accessSecretRequired": "Secret Key is required",
+      "nameMaxLength": "Config name must be at most 63 characters",
+      "pathStyleRequired": "Path-style URL setting is required",
+      "publicAccessRequired": "Public access setting is required"
+    },
+    "modal": {
+      "createTitle": "Create File Config",
+      "editTitle": "Edit File Config",
+      "discardChanges": "Discard unsaved changes?",
+      "discardConfirm": "Discard",
+      "loading": "Loading..."
+    }
+  }
+}
