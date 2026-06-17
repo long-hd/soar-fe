@@ -1,4 +1,4 @@
-import type { AxiosProgressEvent } from 'axios'
+import type { AxiosProgressEvent, AxiosResponse } from 'axios'
 
 import { request } from '@/shared/api/http-client'
 import type { CommonResult, PageResult } from '@/shared/api/types'
@@ -24,6 +24,14 @@ export const fileApi = {
     return request
       .delete<CommonResult<boolean>>(`${BASE}/delete-list`, { params: { ids } })
       .then(r => r.data.data)
+  },
+
+  /**
+   * Fetch file as Blob for force-download (bypasses BE inline/attachment semantics).
+   * The URL is the absolute file URL from FileRespDTO.url.
+   */
+  downloadFile(url: string): Promise<AxiosResponse<Blob>> {
+    return request.get<Blob>(url, { responseType: 'blob' })
   },
 
   /**

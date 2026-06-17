@@ -25,6 +25,7 @@ import { FileUploadModal } from '../components/file-upload-modal'
 import { FILE_PERMISSIONS, PREVIEWABLE_IMAGE_PREFIX, PREVIEWABLE_PDF_TYPE } from '../constants'
 import { fileKey, useFileMutations } from '../hooks'
 import type { FileFilters, FileRespDTO } from '../types'
+import { triggerDownload } from '@/shared/lib/download'
 
 export function FileListPage() {
   const { t } = useTranslation()
@@ -34,6 +35,7 @@ export function FileListPage() {
   const tableState = useTableState<FileFilters>({})
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([])
   const [uploadModal, setUploadModal] = useState({ open: false })
+  const [downloadingId, setDownloadingId] = useState<number | null>(null)
 
   const { tableProps, refetch } = usePagedQuery<FileRespDTO, FileFilters>({
     baseQueryKey: fileKey.all,
@@ -46,6 +48,18 @@ export function FileListPage() {
   const handleUpload = () => setUploadModal({ open: true })
 
   const handleCloseUploadModal = () => setUploadModal({ open: false })
+
+  const handleDownload = async (record: FileRespDTO) => {
+    setDownloadingId(record.id)
+    try {
+      const response = await fileApi.downloadFile(record.url)
+      triggerDownload(response, record.name)
+    } catch {
+      message.error(t('infraFile.messages.downloadFailed'))
+    } finally {
+      setDownloadingId(null)
+    }
+  }
 
   const handleCopyUrl = async (url: string) => {
     const ok = await copyToClipboard(url)
@@ -154,10 +168,8 @@ export function FileListPage() {
               type="link"
               size="small"
               icon={<Icon icon="mdi:download" />}
-              href={record.url}
-              target="_blank"
-              rel="noreferrer"
-              download={record.name}
+              loading={downloadingId === record.id}
+              onClick={() => void handleDownload(record)}
             />
           </Tooltip>
           <HasPermission code={FILE_PERMISSIONS.delete}>

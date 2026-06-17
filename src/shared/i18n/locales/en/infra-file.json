@@ -34,7 +34,8 @@
       "uploadSuccess": "Upload succeeded",
       "uploadFailed": "Upload failed",
       "copySuccess": "URL copied to clipboard",
-      "copyFailed": "Failed to copy URL"
+      "copyFailed": "Failed to copy URL",
+      "downloadFailed": "Failed to download file"
     },
     "upload": {
       "title": "Upload Files",

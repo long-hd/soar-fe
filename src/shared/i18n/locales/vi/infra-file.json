@@ -34,7 +34,8 @@
       "uploadSuccess": "Tải lên thành công",
       "uploadFailed": "Tải lên thất bại",
       "copySuccess": "Đã sao chép URL",
-      "copyFailed": "Sao chép thất bại"
+      "copyFailed": "Sao chép thất bại",
+      "downloadFailed": "Tải xuống thất bại"
     },
     "upload": {
       "title": "Tải lên file",
