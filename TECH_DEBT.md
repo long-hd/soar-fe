@@ -91,6 +91,42 @@ Chronological (newest first).
 | -------- | --------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `A3-TD3` | `<DeptTreeSelect>` no `disabledIds` for subtree exclusion | 5B/TD block | Added `disabledIds` prop + recursive disable in `toTreeData`. Validates in dept edit modal (excludes self + descendants). Reused by `<MenuTreeSelect>` (TM block) — pattern propagated to foundation. |
 
+| ID                                     | Description                                                                      | Resolution                                                |
+| -------------------------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| BE-TD-3                                | `deleteRole`/`deleteRoleList`/`deleteUser`/`deleteUserList` missing cache evicts | ✅ Phase A.2 — added `@Caching(evict={...})` blocks       |
+| BE-TD-5                                | `findAllByRoleIdIn` cosmetic rename                                              | ✅ Phase A.5 — renamed to `findMenuIdsByRoleIdIn`         |
+| BE-TD-6                                | `updateRoleDataScope` defensive strip                                            | ✅ Phase A.7 — added DEPT_CUSTOM guard                    |
+| BE-TD-4                                | Cache audit pass                                                                 | ✅ Phase A.3 — verified OAUTH_CLIENT clean (no mutations) |
+| BE-TD-7                                | Other repos projection bug audit                                                 | ✅ Phase A.6 — verified all 8 candidates clean            |
+| TD-FE-6                                | LOCAL/DB domain required + URL format                                            | ✅ Resolved trong file-config CP2                         |
+| TD-FE-1                                | React 19 set-state-in-effect lint audit                                          | ✅ Phase B.3 — pnpm lint clean                            |
+| Latent: file menu hierarchy conflation | 2100 = MENU + parent                                                             | ✅ Resolved via V1_1_4 migration                          |
+| Latent: cross-origin download attr     | Browser inline-renders images                                                    | ✅ Resolved via `triggerDownload` utility                 |
+
+#### BE
+
+| ID          | Description                                                                                                                                                                                                           | Severity |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| **BE-TD-8** | `LocalFileClient` + `DBFileClient` fallback to request host khi `config.domain` empty (parity với `S3FileClient` auto-derive). Care `X-Forwarded-Host` cho reverse-proxy. Eliminates footgun behind TD-FE-6 entirely. | Low      |
+| **BE-TD-9** | Production file configs prefer `enablePublicAccess=false` → BE returns presigned URLs với expiry. Apply trong Oracle deploy session per OBS-PRODUCTION-PRESIGNED.                                                     | Medium   |
+
+#### FE
+
+| ID           | Description                                                                                                                                                                                                        | Severity    |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| **TD-FE-7**  | Form modal inner-scroll pattern (`styles.body.maxHeight + overflowY: auto`) — 1 instance. Observe; codify khi 2nd instance.                                                                                        | Observe     |
+| **TD-FE-8**  | Anticipated 2nd instance của TD-FE-7 — file-upload-modal nếu nhiều files.                                                                                                                                          | Anticipated |
+| **TD-FE-9**  | Audit 7 existing list pages (role, user, dept, dict-data, dict-type, menu, post) cho icon pattern migration per FE-PATCH-5. **Long decision: defer** — decide với data thực tế UX feedback post-production deploy. | Defer       |
+| **TD-FE-10** | Icon-only Tooltip degrades on touch. Track nếu mobile/tablet usage surfaces.                                                                                                                                       | Anticipated |
+
+#### Deferred features
+
+| ID               | Description                                                               |
+| ---------------- | ------------------------------------------------------------------------- |
+| **DEFER-FILE-1** | Mode 2 S3 presigned upload cho large files (>10MB Spring multipart limit) |
+| **DEFER-FILE-2** | Pre-flight master config check trước khi mở upload modal                  |
+| **DEFER-FILE-3** | Single-file mode toggle nếu multi-file UI noisy                           |
+
 ---
 
 ## Severity Drift Review

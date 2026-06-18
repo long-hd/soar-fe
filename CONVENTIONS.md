@@ -1375,6 +1375,207 @@ When a Form.Item validator references another field via `getFieldValue`, MUST in
 
 Common omission — antd doesn't warn at compile time. Manifests as: user fills both fields, changes first field, second's validator stays stale.
 
+### Form-less assignment modal với draft pattern
+
+**Status**: Codified — 2 instances (UserAssignRolesModal + RoleMenuAssignmentModal).
+
+**Rule**: Khi modal performs "assign entity X to entity Y" workflow với **no form fields ngoài selection widget** (no name, description, validation rules), KHÔNG wrap trong antd `<Form>`. Dùng controlled state với **draft pattern** để tránh React 19's `react-hooks/set-state-in-effect` violation.
+
+#### Draft pattern shape
+
+```tsx
+const [draft, setDraft] = useState<{
+  entityId: number // anchor — tracks WHICH entity draft belongs to
+  // ...selection state, e.g. checkedKeys, halfCheckedKeys, transferredIds
+} | null>(null)
+
+// Derived display state
+const currentSelection =
+  draft != null && draft.entityId === entityId
+    ? draft.selectionState
+    : (beQuery.data ?? defaultEmptyState)
+```
+
+`draft.entityId === entityId` guard handles edge case khi parent component switches modal sang different entity trước khi draft cleared.
+
+#### Exit-path cleanup
+
+ALL exit paths phải clear draft:
+
+```tsx
+const handleClose = () => {
+  setDraft(null)
+  onClose()
+}
+```
+
+#### Dirty check + Save button gating (footgun protection)
+
+```tsx
+const isDirty = !setsEqual(currentSubmitSet, initialSet)
+const isDataReady = !showLoading && entityId != null
+
+// On <Modal>:
+okButtonProps={{ disabled: !isDataReady }}
+confirmLoading={mutation.isPending}
+```
+
+Without this, admin clicking Save trong BE query loading window submits empty selection → diff-based BE silently wipes ALL existing assignments. **Codified footgun**.
+
+#### When to use antd Form instead
+
+If modal has form fields ngoài selection widget (name input, status toggle, remark) → use antd Form. Rule of thumb: ≤1 selection widget + 0 other fields = draft pattern. ≥2 fields total OR any validation rules = antd Form.
+
+---
+
+### React 19 set-state-in-effect rule
+
+**Rule**: `react-hooks/set-state-in-effect` (React 19 ESLint rule) flags `setState` calls trong `useEffect` khi value derive được từ existing state/props. Use **derived state** instead.
+
+#### Anti-pattern (ESLint flag)
+
+```tsx
+// ❌
+useEffect(() => {
+  if (!open || !query.data) return
+  setCheckedKeys(Array.from(query.data))
+  setHalfCheckedKeys([])
+  initialKeysRef.current = new Set(query.data)
+}, [open, query.data])
+```
+
+#### Pattern (derived + draft)
+
+```tsx
+// ✅
+const [draft, setDraft] = useState<DraftShape | null>(null)
+
+const checkedKeys =
+  draft != null && draft.id === id ? draft.checkedKeys : Array.from(query.data ?? [])
+
+const handleCheck = (checked, info) => {
+  setDraft({ id, checkedKeys: checked, halfCheckedKeys: info.halfCheckedKeys ?? [] })
+}
+```
+
+State chỉ thay đổi qua user interaction (onCheck), không qua query loading consequence.
+
+#### Form-based modal exception
+
+`form.setFieldsValue()` là Form imperative API, NOT React setState. ESLint may or may not flag tùy rule precision. Run lint to confirm + refactor case-by-case.
+
+---
+
+### "More" Dropdown cho advanced row actions
+
+**Status**: Observed, defer extraction. **Pattern note only** — không extract component cho đến khi 2nd consumer xuất hiện.
+
+#### Current inline pattern (1 instance: role-list-page)
+
+```tsx
+render: (_, record) => {
+  const moreMenuItems = [
+    ...(has(PERMISSION_A) ? [{ key: 'a', label, disabled: isSystem(record), onClick }] : []),
+    ...(has(PERMISSION_B) ? [{ key: 'b', label, disabled: isSystem(record), onClick }] : []),
+  ]
+  const showMoreMenu = moreMenuItems.length > 0
+  return (
+    <Space size="small">
+      <HasPermission code={PERMISSION_EDIT}>
+        <Button>Edit</Button>
+      </HasPermission>
+      <HasPermission code={PERMISSION_DELETE}>
+        <Button>Delete</Button>
+      </HasPermission>
+      {showMoreMenu && (
+        <Dropdown menu={{ items: moreMenuItems }}>
+          <Button type="link" size="small" icon={<Icon icon="mdi:dots-vertical" />}>
+            {t('common.more')}
+          </Button>
+        </Dropdown>
+      )}
+    </Space>
+  )
+}
+```
+
+**When to extract** (`AdvancedActionsDropdown`): khi 2nd consumer xuất hiện (vd user-list-page hoặc dept-list-page advanced actions). Defer until then.
+
+---
+
+### Code field immutability on edit
+
+**Status**: Reinforced — 5 instances (Role.code, DictType.type, DictData.dictType, Post.code, **FileConfig.storage**).
+
+**Rule**: Identifier fields (code, type, key) dùng cho cross-references phải **immutable on edit**. UI pattern:
+
+```tsx
+<Form.Item name="code" label={t('field.code')} rules={[{ required: true }]}>
+  <Input
+    placeholder={t('placeholder.code')}
+    disabled={!!editingId} // ← disabled in edit mode
+  />
+</Form.Item>
+```
+
+Workflow để rename: delete old entity + recreate với new code. UI không cho phép in-place rename.
+
+Predicate `!!editingId` consistent across 5 modals. Plus `configId != null` variant cho file-config-form-modal (same semantics).
+
+### Icon-only Tooltip table action columns
+
+**Status**: Codified — 2 instances (file-list, file-config).
+
+**Rule**: Table action columns dùng **icon-only Tooltip-wrapped Buttons**, NOT text-labeled buttons. Locale-stable, compact, scales với N actions, parity với admin tool conventions (GitHub/GitLab/Atlassian).
+
+#### Pattern shape
+
+```tsx
+<HasPermission code={...}>
+  <Tooltip title={t('...')}>
+    <Button
+      type="link"
+      size="small"
+      icon={<Icon icon="..." />}
+      onClick={...}
+      // optional: danger, loading
+    />
+  </Tooltip>
+</HasPermission>
+```
+
+#### Required rules
+
+1. **Iconify-only**: `<Icon icon="mdi:..." />` from `@iconify/react`. NO antd icons, NO custom SVG.
+2. **Tooltip on every action**: title comes từ existing i18n action key (re-use `actions.edit`, etc. — không tạo separate `tooltip.*` keys).
+3. **Permission gating**: wrap với `<HasPermission>` outside Tooltip.
+4. **Button props**:
+   - `type="link"` + `size="small"` standard
+   - `danger` cho destructive actions
+   - `loading={loadingId === record.id}` cho async actions (Test pattern)
+5. **Column width**: ~36px per icon + 8px gap. Concrete: 3 actions → 140; 4 actions → 160; 5+ → consider "More" Dropdown (FE-PATCH-3).
+6. **Download-style actions** (browser navigation): use `<Button href={url} target="_blank" download={name}>` — antd renders as anchor, single clickable.
+
+#### Icon vocabulary
+
+| Action                  | Iconify name               | Notes                                   |
+| ----------------------- | -------------------------- | --------------------------------------- |
+| Edit                    | `mdi:pencil-outline`       |                                         |
+| Delete                  | `mdi:delete-outline`       | + `danger`                              |
+| Set as Master / Default | `mdi:star-outline`         | conditional render khi `!record.master` |
+| Test connection         | `mdi:check-circle-outline` | + `loading={testingId === record.id}`   |
+| Copy text/URL           | `mdi:content-copy`         |                                         |
+| Download                | `mdi:download`             | use Button `href`+`download`            |
+| Preview                 | `mdi:eye-outline`          |                                         |
+| Upload (header)         | `mdi:cloud-upload-outline` |                                         |
+
+Other actions: pick MDI equivalent. Stick MDI namespace.
+
+#### When NOT to use icon-only
+
+- Header bar primary actions ("+ Create", "Bulk Delete") — keep text + icon together
+- Context-needs-read actions ("Resend email to user@x.com") — use Dropdown menu với labels
+
 ### References
 
 For full deliberation behind each pattern:
