@@ -9,7 +9,7 @@ export interface ThemeState {
 }
 
 const initialState: ThemeState = {
-  mode: 'light',
+  mode: 'dark',
   siderCollapsed: false,
 }
 
